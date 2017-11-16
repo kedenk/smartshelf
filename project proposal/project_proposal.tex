@@ -59,6 +59,8 @@
 \usepackage{booktabs}
 \usepackage{textcomp}
 
+\usepackage[ngerman]{babel}
+
 % Some optional stuff you might like/need.
 \usepackage{microtype}        % Improved Tracking and Kerning
 % \usepackage[all]{hypcap}    % Fixes bug in hyperref caption linking
@@ -206,15 +208,88 @@ Kumar Pathak showed that important information can be presented by QR code and u
 
 
 \section{Approach}
+The Smart Shelf is able to recognize low storage of items. 
+Additionally, it should support user to find the search item in a shelf and show the location of it. 
+This section will explain further details of the Smart Shelf. 
+A description of what features the shelf will provide and how it works will be covered in this section. 
+This work will provide a prototype of a smart shelf which is representative for a bigger application. 
+For the prototype a shelf similar to the shelf in figure \ref{fig:example_shelf} will be used. 
+%
+\begin{figure}
+	\includegraphics[width=0.9\columnwidth]{figures/example-prototype-shelf}
+	\caption{Example for used Shelf as prototype.}~\label{fig:example_shelf}
+\end{figure}
+%
+\\
+\\
+The Smart Shelf contains drawers with several products/items. 
+With a smart phone app or another device the user can search for a specific product which may contained in the shelf. 
+Is the item contained in the shelf, a light mounted at the drawer which contains the item, will switch on. 
+This indicates where the user can get the item.
+There is no need to scan the whole shelf for the searched item. 
+The amount of items in one drawer can be measured with the weight of one item. 
+With this information the Smart Shelf can display the amount of items in a drawer and also if it is empty. 
+An empty drawer is indicated with a red light mounted on the drawer. 
+
+To design the Smart Shelf \glqq{}smart\grqq{} it uses the information of the amount of items for trigger a so called \textit{low stock alarm}. 
+This results in emails send to configured addresses. 
+The receiver can subsequently order supplies of that item. 
+
+
+\subsection{Determine amount of Items}
+
+
+
+\subsection{Assumptions}
+To realize this prototype we assume some preconditions which are listed in the following.
+\\
+\\
+All items in the shelf either without packaging or with packaging. 
+There will be no drawer where items be mixed. 
+Furthermore, at any time there is only one sort of items in one drawer. 
+Every drawer contains a different item. 
+
 
 \subsection{Inputs}
+The system prototype needs different inputs. 
+These are listed in the following. 
+%
+\begin{itemize}
+	\item Search word for an item. 
+	\item Weights of the items in a corresponding drawer. 
+	\item Scanned QR-code on the drawer to get more information about the containing item. 
+\end{itemize}
+
+
 \subsection{Outputs}
+The outputs of the system are the following. 
+%
+\begin{itemize}
+	\item Green lights on the drawer which indicates in what drawer the searched item can be found. 
+	\item Red lights on the drawer which indicates if the item contained in that drawer is out of stock. 
+	\item Email to configured email addresses as \glqq{}low stock alarm\grqq{} to signal if there is only a low amount of items in a drawer or the item is out of stock. 
+	\item By scanning the QR-code the app shows information about the item contained in the scanned drawer. 
+\end{itemize}
+
+
 \subsection{User Interaction}
 
+
 \section{Expected Results}
+This section describes the different features the prototype of the Smart Shelf will provide. 
+User are able to search with keywords for specific items may contained in the shelf. 
+If the item is there the appropriate drawer will be highlighted with a green light. 
+If there is only a low amount of itmes left in a drawer, a so called \textit{low stock alarm} will be triggered. 
+This results in an email to configured email addresses. 
+In further iterations this can end in an automatic ordering. 
+So that all items in the shelf will be always available. 
+Is a item out of stock the appropriate drawer is marked with a red light. 
+
+The QR-Codes mounted on every drawer can be scanned by a smart phone app. 
+This app will display information about the item contained in the scanned drawer, order information and amount of items left. 
 
 
-\subsection{Time Plan}
+\section{Time Plan}
 
 
 
@@ -255,7 +330,7 @@ the grant from NSF (\#1234--2012--ABC). \textit{This whole paragraph is
 
 % REFERENCES FORMAT
 % References must be the same font size as other body text.
-\bibliographystyle{SIGCHI Reference-Format}
+\bibliographystyle{SIGCHI-Reference-Format}
 \bibliography{sample}
 
 
