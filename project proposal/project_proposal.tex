@@ -187,7 +187,8 @@ Searching for items in these shelves can be hard and cost a lot of time.
 An additional scenario is if you apply this concept to big warehouses with hundreds of shelves and more drawers or places where you can place items. 
 Finding in such a warehouse an item can be still harder. 
 
-Especially if you use shelves to store for example electronic components the next problem appears if you finally found the correct drawer with the searched component. 
+Especially if you use shelves to store for example electronic components. 
+The next problem appears if one finally found the correct drawer with the searched component. 
 The drawer is empty and no one ordered supplies. 
 This is not only annoying, also the productivity of team sinks. 
 Maybe the team or colleague can not finish work because they need that component that is not in stock currently. 
@@ -196,7 +197,7 @@ Maybe the team or colleague can not finish work because they need that component
 Not only warehouses or storage rooms with shelves have those problems with the inefficiency in finding items or the premise if one item is out of stock. 
 The same problems appear in retail. 
 Customer which can't find their favourite product in a shop are unsatisfied. 
-Maybe they go to another shop and from that moment go directly to that other shop. 
+Maybe they go to another shop and from that don't come back. 
 This problem can also be tackled with smart shelves. 
 The shelf itself could detect if some products in it are only available in a small amount. 
 In this case the shelf could order new products or at least send an information to an operator who can order supplies. 
@@ -205,7 +206,7 @@ With this strategy there will be no more empty shelves in shops and customers ca
 Smart Shelf should be a solution for these problems. 
 It could observe the amount of items in itself, help people to find products and also order supplies if the amount of items is low. 
 Furthermore, if you have a shelf with sensitive items or secrete documents, one can think about to restrict the access to some drawers. 
-Drawers could be locked and only with scanning the appropriate QR-code on the drawer the drawer opens if the user is trustful. 
+Drawers could be locked and only with scanning the appropriate QR-code on the drawer it opens if the user is trustful. 
 
 
 \section{Related Work}
@@ -225,7 +226,7 @@ We see there are many existing work happened in granular level, but here we are 
 
 \section{Approach}
 The Smart Shelf is able to recognize low storage of items. 
-Additionally, it should support user to find the search item in a shelf and show the location of it. 
+Additionally, it should support user to find the searched item in a shelf and show the location of it. 
 This section will explain further details of the Smart Shelf. 
 A description of what features the shelf will provide and how it works will be covered in this section. 
 This work will provide a prototype of a smart shelf which is representative for a bigger application. 
@@ -239,7 +240,7 @@ For the prototype a shelf similar to the shelf in figure \ref{fig:example_shelf}
 \\
 \\
 The Smart Shelf contains drawers with several products/items. 
-With a smart phone app or another device the user can search for a specific product which may contained in the shelf. 
+With a smart phone app or another mobile device the user can search for a specific product which may contained in the shelf. 
 Is the item contained in the shelf, a light mounted at the drawer which contains the item, will switch on. 
 This indicates where the user can get the item.
 There is no need to scan the whole shelf for the searched item. 
@@ -252,18 +253,41 @@ This results in emails send to configured addresses.
 The receiver can subsequently order supplies of that item. 
 
 
-\subsection{Determine amount of Items}
-
-
-
 \subsection{Assumptions}
 To realize this prototype we assume some preconditions which are listed in the following.
 \\
 \\
-All items in the shelf either without packaging or with packaging. 
+All items in the shelf are either without packaging or with packaging. 
 There will be no drawer where items be mixed. 
 Furthermore, at any time there is only one sort of items in one drawer. 
 Every drawer contains a different item. 
+
+
+\subsection{Determine amount of Items}
+The amount of items in a drawer will be determined with the weight. 
+In an initial step to all drawers an item will be assigned. 
+This includes some information of the item as well as the weight of it. 
+Measuring the overall weight minus the weight of the drawer itself one can compute the the amount of items. 
+This amount can prompted by an user interfaces, in this case an app, explained in the next section. 
+
+Another solution to determine the amount of items is with the help of RFID. 
+Every item is mounted with a RFID chip which can be tracked. 
+However, for the prototype this is not feasible. 
+Because item size there is not enough space to mount such chips. 
+Nevertheless, this solution can be applied to bigger shelves like in warehouses or retail. 
+This provides additional advantages. 
+The RFID chips can be tracked and also wrong places items can easily identified and tracked. 
+
+
+\subsection{App}
+To search for specific items a smart phone app is used. 
+The keyword can typed into a text box. 
+If found, subsequently the interface will show information about the searched item and the Smart Shelf will indicate with the green light in what drawer the item can be found. 
+
+The app provides an additional feature in scanning QR codes mounted on each drawer. 
+By scanning a QR code the app will display the contained item and additional information (description, amount). 
+
+Correct inputs are displayed with appropriate messages on the screen. 
 
 
 \subsection{Inputs}
@@ -288,18 +312,15 @@ The outputs of the system are the following.
 \end{itemize}
 
 
-\subsection{User Interaction}
-
-
 \section{Expected Results}
 This section describes the different features the prototype of the Smart Shelf will provide. 
 User are able to search with keywords for specific items may contained in the shelf. 
 If the item is there the appropriate drawer will be highlighted with a green light. 
-If there is only a low amount of itmes left in a drawer, a so called \textit{low stock alarm} will be triggered. 
+If there is only a low amount of items left in a drawer, a so called \textit{low stock alarm} will be triggered. 
 This results in an email to configured email addresses. 
 In further iterations this can end in an automatic ordering. 
 So that all items in the shelf will be always available. 
-Is a item out of stock the appropriate drawer is marked with a red light. 
+However, is a item still out of stock the appropriate drawer is marked with a red light. 
 
 The QR-Codes mounted on every drawer can be scanned by a smart phone app. 
 This app will display information about the item contained in the scanned drawer, order information and amount of items left. 
@@ -313,6 +334,30 @@ will be finished in 2 nd cycle. The third cycle finished with work related to se
 and QR code and make prototype. The last but not least, will examine Is it working
 according to the requirements and will do unit testing. In the last cycle, it is
 expecting, to remove bugs again and do system testing to achieve desire results.
+
+
+
+\section{Outlook}
+This section provides an outlook and what further improvements can be applied to the prototype. 
+\\
+\\
+As mentioned earlier, for warehouses or retail products and items can be mounted with RFID chips. 
+This provides more accurate information about where products are and how one can find them. 
+Additionally, the product itself can carry information about itself which can directly scanned by users. 
+With mounted RFID chips one can imagine, if the item is placed on a special plate which can recognize the RFID chip, automatically information about it can be shown on a display. 
+So the item itself serves as tangible user interface. 
+\\
+\\
+Further improvement can be applied in putting items into the shelf. 
+Sometimes for people it is not obvious what item they have and where to put it into the shelf. 
+With help of image recognition or RFID chips this can be improved. 
+RFID chips can simply scanned and the app can tell where to put the item. 
+Image recognition can scan the item itself and determine where to put it. 
+\\
+\\
+For warehouses there is also the possibility to lead the user to the correct shelf. 
+This could be done with light on the floor, directing the user, or with augmented reality. 
+For this the user can use a HoloLens or the smart phone camera which display information about the direction to the correct shelf. 
 
 
 \section{Conclusion}
