@@ -94,3 +94,5 @@ fabric.properties
 .idea/sonarlint
 
 # End of https://www.gitignore.io/api/java,java-web,jetbrains
+server/.metadata/
+server/Servers/
