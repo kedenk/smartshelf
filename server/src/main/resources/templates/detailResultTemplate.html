@@ -15,25 +15,14 @@
             <th>Amount</th>
         </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td>Testitem</td>
-            <td>Testbeschreibung</td>
-            <td>3</td>
-            <td><button type="button" class="btn btn-success">Show</button></td>
-        </tr>
-        <tr>
-            <td>Testitem2</td>
-            <td></td>
-            <td>20</td>
-            <td><button type="button" class="btn btn-success">Show</button></td>
-        </tr>
-        <tr>
-            <td>Testitem3</td>
-            <td>abc</td>
-            <td>5</td>
-            <td><button type="button" class="btn btn-success">Show</button></td>
-        </tr>
+    <tbody th:if="${searchResult}">
+                
+        <tr th:id="${searchResult}" th:each="item, iterStat : ${searchResult}">
+		    <td th:text="${item.id}">ID</td>
+		    <td th:text="${item.name}">${item.name}</td>
+		    <td th:text="${item.description}">Created Date</td>
+		    <td></td>
+		</tr>
     </tbody>
 </table>
 </div>

@@ -9,11 +9,13 @@
     <div class="container search-container">
         <h1>SmartShelf</h1>
         <br/>
+        
         <input type="text"
                id="main-search-field"
                class="form-control input-lg col-lg-6"
                required="required"
-               placeholder="Search keyword" />
+               placeholder="Search keyword" 
+               th:value="${searchParam}" />
         <br/>
         <br/>
         <br/>
@@ -24,5 +26,7 @@
     </div>
 </div>
  
+ 
+
 </body>
 </html>

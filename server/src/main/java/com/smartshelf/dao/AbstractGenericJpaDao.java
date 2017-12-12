@@ -18,7 +18,7 @@ public class AbstractGenericJpaDao<Entity, PrimaryKey extends Serializable>
 	
 	@Override
 	public PrimaryKey create(Entity newPersistentObject) {
-	entityManager.persist(newPersistentObject);
+		entityManager.persist(newPersistentObject);
 		return getPrimaryKey(newPersistentObject);
 	}
 	 
