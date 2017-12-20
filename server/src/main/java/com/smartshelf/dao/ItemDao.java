@@ -1,33 +1,32 @@
 package com.smartshelf.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
 import com.smartshelf.model.Item;
 
 @Repository
-public class ItemDao {
-
-	@PersistenceContext
-	private EntityManager em; 
+@Transactional
+public class ItemDao extends AbstractGenericDao<Item> {
+	
+	private final static String GET_BY_KEYWORD_QUERY = "SELECT e FROM Item e WHERE e.name LIKE :keyword";
 	
 	public List<Item> findWithKeyword(String keyword) {
 		
-		List<Item> test = new ArrayList<Item>(); 
+		TypedQuery<Item> query = entityManager.createQuery(GET_BY_KEYWORD_QUERY, Item.class);
+		String wildcardKeyword = "%" + keyword + "%";
+		query.setParameter("keyword", wildcardKeyword);
 		
-		Item i = new Item(); 
-		i.amount = 2; 
-		i.description = "Best item"; 
-		i.name = "WIFI Module"; 
-		i.id = 100; 
+		return query.getResultList(); 
+	}
+	
+	public Item findById(long id) {
+		Item e = entityManager.find(Item.class, id);
 		
-		test.add(i); 
-		
-		return test; 
+		return e; 
 	}
 }

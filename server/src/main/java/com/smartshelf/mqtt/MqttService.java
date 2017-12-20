@@ -6,7 +6,9 @@ public interface MqttService {
 	
 	public void disconnect(); 
 	
-	public void subscribe(); 
+	public void subscribe(String topic); 
 	
-	public void publish(); 
+	public void unsubscribe(String topic);
+	
+	public void publish(String topic, byte[] payload); 
 }

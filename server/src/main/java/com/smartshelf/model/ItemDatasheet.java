@@ -5,22 +5,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "box")
-public class Box {
-	
+@Table(name = "itemdata")
+public class ItemDatasheet {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public long id; 
 	
-	@OneToOne
-	public Item item; 
+	@Column(name = "dkey", nullable = false)
+	public String key; 
 	
-	@Column
-	public int amount;
+	@Column(name = "dvalue", nullable = false)
+	public String val;
 
 	public long getId() {
 		return id;
@@ -30,19 +29,19 @@ public class Box {
 		this.id = id;
 	}
 
-	public Item getItem() {
-		return item;
+	public String getKey() {
+		return key;
 	}
 
-	public void setItem(Item item) {
-		this.item = item;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public int getAmount() {
-		return amount;
+	public String getValue() {
+		return val;
 	}
 
-	public void setAmount(int amount) {
-		this.amount = amount;
+	public void setValue(String value) {
+		this.val = value;
 	} 
 }

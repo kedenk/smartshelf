@@ -37,12 +37,14 @@
 </noscript>
 
 <div class="master">
-	<div th:replace="searchTemplate :: searchDialog"></div>
+	<!-- <div th:replace="searchTemplate :: content"></div> -->
+	<div th:replace="${masterview} :: content"></div>
 </div>
 
 <div class="container">
-	<div class="row detail col-md-12">
-	    <div class="row col-md-12 detail" th:include="detailResultTemplate :: searchResult">
+	<div class="row detail col-md-12" th:if="${detailview} != null">
+	    <!-- <div class="row col-md-12 detail" th:include="detailResultTemplate :: searchResult"> -->
+	    <div class="row col-md-12 detail" th:include="${detailview} :: content">
 	   	</div>
    	</div>
    	
@@ -61,6 +63,7 @@
 
 <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
 <script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}" type="text/javascript"></script>
+<script src="../static/js/qrscanning/jsqrscanner.nocache.js" th:src="@{/js/qrscanning/jsqrscanner.nocache.js}" type="text/javascript"></script>
 
 <script th:inline="javascript">
 
@@ -69,11 +72,22 @@
  		$("#main-search-submit").click(function() {
  			
  			var searchparam = $("#main-search-field").val(); 
- 			var sp_uriencoded = encodeURI( searchparam );
+ 			itemSearch(searchparam);
+ 		});
+ 		
+ 		$("#navbar-search-button").click(function() {
+ 			
+ 			var searchparam = $("#navbar-search-field").val(); 
+ 			itemSearch(searchparam);
+ 		});
+ 		
+ 		function itemSearch( keyword ) {
+ 			
+ 			var sp_uriencoded = encodeURI( keyword );
  			console.log("Search parameter: " + sp_uriencoded); 
  			
  			window.location.href='http://localhost:8080/?searchParam=' + sp_uriencoded;
- 		});
+ 		}
 	});
 
  </script>

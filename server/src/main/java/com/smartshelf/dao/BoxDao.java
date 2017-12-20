@@ -6,13 +6,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
 import com.smartshelf.model.Box;
 
 @Repository
-public class BoxDao {
+@Transactional
+public class BoxDao extends AbstractGenericDao<Box> {
 
 	@PersistenceContext
 	private EntityManager em; 

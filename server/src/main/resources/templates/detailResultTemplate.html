@@ -2,26 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
  
-<body layout:fragment="searchResult">
+<body layout:fragment="content">
 
-<div class="row" th:fragment="searchResult">
+<div class="row" th:fragment="content">
 <h2>Results</h2>
 
 <table class="table table-striped table-hover">
     <thead>
         <tr>
+        	<th>ID</th>
             <th>Name</th>
             <th>Description</th>
             <th>Amount</th>
+            <th></th>
+            <th></th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody th:if="${searchResult}">
                 
         <tr th:id="${searchResult}" th:each="item, iterStat : ${searchResult}">
-		    <td th:text="${item.id}">ID</td>
-		    <td th:text="${item.name}">${item.name}</td>
-		    <td th:text="${item.description}">Created Date</td>
-		    <td></td>
+		    <td th:text="${item.id}"></td>
+		    <td th:text="${item.name}"></td>
+		    <td th:text="${item.description}"></td>
+		    <td th:text="${item.amount}"></td>
+		    <td><button type="button" class="btn btn-primary">Blue</button></td>
+		    <td><button type="button" class="btn btn-success">Green</button></td>
+		    <td>available</td>
 		</tr>
     </tbody>
 </table>
