@@ -1,5 +1,7 @@
 package com.smartshelf.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "itemdata")
-public class ItemDatasheet {
+public class ItemDatasheet implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

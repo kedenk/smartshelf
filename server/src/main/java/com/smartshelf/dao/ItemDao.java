@@ -23,10 +23,4 @@ public class ItemDao extends AbstractGenericDao<Item> {
 		
 		return query.getResultList(); 
 	}
-	
-	public Item findById(long id) {
-		Item e = entityManager.find(Item.class, id);
-		
-		return e; 
-	}
 }

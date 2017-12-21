@@ -25,10 +25,10 @@
 		    <td th:text="${item.id}"></td>
 		    <td th:text="${item.name}"></td>
 		    <td th:text="${item.description}"></td>
-		    <td th:text="${item.amount}"></td>
+		    <td th:text="${item.box.amount}"></td>
 		    <td><button type="button" class="btn btn-primary">Blue</button></td>
 		    <td><button type="button" class="btn btn-success">Green</button></td>
-		    <td>available</td>
+		    <td th:text="${item.status}"></td>
 		</tr>
     </tbody>
 </table>

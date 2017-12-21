@@ -12,11 +12,20 @@
     </div>
 
     <script th:inline="javascript">
+    
+ 		function getInformaton( boxid ) {
+ 			
+ 			console.log("Fetching data for " + boxid);
+ 			
+ 			window.location.href="http://" + [[${@environment.getProperty('server.url')}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/qrscanner/info/box/" + boxid;
+ 		}
+ 		
         function onQRCodeScanned(scannedText)
         {
             // scannedText is the value for the input QR image.
             console.log("Scanned QR-Code: ", scannedText);
-
+            
+            getInformaton(scannedText);
         }
 
         //this function will be called when JsQRScanner is ready to use
@@ -35,7 +44,6 @@
             }
         }
     </script>
-    
 </div>
  
  

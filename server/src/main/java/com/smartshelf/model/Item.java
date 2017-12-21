@@ -1,5 +1,6 @@
 package com.smartshelf.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -8,13 +9,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "item")
 @SequenceGenerator(name="item_seq", initialValue=1, allocationSize=100)
-public class Item {
+public class Item implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "item_seq")
@@ -26,8 +33,11 @@ public class Item {
 	@Column
 	public String description; 
 	
-	@Column
-	public int amount; 
+	@Column 
+	public ItemStatus status;
+	
+	@OneToOne(mappedBy="item")
+	public Box box;
 	
 	@OneToMany
 	public List<ItemDatasheet> datasheet;
@@ -56,19 +66,23 @@ public class Item {
 		this.description = description;
 	}
 
-	public int getAmount() {
-		return amount;
-	}
-
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
-
 	public List<ItemDatasheet> getDatasheet() {
 		return datasheet;
 	}
 
 	public void setDatasheet(List<ItemDatasheet> datasheet) {
 		this.datasheet = datasheet;
+	}
+
+	public ItemStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ItemStatus status) {
+		this.status = status;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

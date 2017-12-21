@@ -36,7 +36,7 @@ public class PersistenceTest {
 	public Item createRandomItemObj() {
 		
 		Item i = new Item(); 
-		i.amount = new Random().nextInt(100); 
+		//i.amount = new Random().nextInt(100); 
 		i.description = "test description " + new Random().nextInt(893298172);
 		i.name = "test name " + new Random().nextInt(893298172);
 		
