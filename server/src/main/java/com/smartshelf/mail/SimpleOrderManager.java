@@ -1,7 +1,5 @@
 package com.smartshelf.mail;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -24,7 +22,6 @@ public class SimpleOrderManager implements OrderManager {
     public void setTemplateMessage(SimpleMailMessage templateMessage) {
         this.templateMessage = templateMessage;
     }
-    
     
     public Thread sendMailAsync(String to, Box box) {
     	

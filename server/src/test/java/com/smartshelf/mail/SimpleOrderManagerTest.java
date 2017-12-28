@@ -8,8 +8,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.smartshelf.model.Box;
@@ -17,10 +17,8 @@ import com.smartshelf.model.Item;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
+@IfProfileValue(name="include-mail-test", value="true")
 public class SimpleOrderManagerTest {
-
-	@Autowired
-    private ApplicationContext context;
 	
 	@Autowired
 	private SimpleOrderManager simpleOrderManager;

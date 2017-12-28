@@ -1,0 +1,7 @@
+Mvn usage: 
+
+mvn test
+	:just test cases
+	
+	-Dinclude-mail-test=true
+		:Include sending of mails

@@ -3,10 +3,6 @@ package com.smartshelf.dao;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Repository;
-
 public interface GenericDao<T extends Serializable> {
 
 	public T findById(long id); 
