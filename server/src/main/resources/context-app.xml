@@ -21,7 +21,12 @@
 	 http://www.springframework.org/schema/util/spring-util.xsd"
 	 >
 	 
-	 <context:component-scan base-package="com.smartshelf.daoo, com.smartshelf.web, com.smartshelf.config, com.smartshelf" />
+	 <context:component-scan base-package="
+	 	com.smartshelf.dao, 
+		 com.smartshelf.web, 
+		 com.smartshelf.config, 
+		 com.smartshelf, 
+		 com.smartshelf.mail" />
  
 	  <!-- Enabling des AspectJ Support -->
 	 <aop:aspectj-autoproxy proxy-target-class="true" />

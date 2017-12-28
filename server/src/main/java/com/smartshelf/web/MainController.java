@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smartshelf.dao.BoxDao;
 import com.smartshelf.dao.ItemDao;
+import com.smartshelf.mail.SimpleOrderManager;
 import com.smartshelf.model.Box;
 import com.smartshelf.model.Item;
 
