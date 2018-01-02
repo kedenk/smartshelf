@@ -30,7 +30,10 @@ void setup() {
 
 void loop() {
   Serial.print("Reading: ");
-  Serial.print(scale_d1.get_units(), 3); //scale.get_units() returns a float
+  Serial.print(scale_d1.get_units(), 3);
+  Serial.print(scale_d2.get_units(), 3);
+  Serial.print(scale_d3.get_units(), 3);
+  Serial.print(scale_d4.get_units(), 3); //scale.get_units() returns a float
   Serial.print(" gram"); //You can change this to kg but you'll need to refactor the calibration_factor
   Serial.println();
   delay(1000);
