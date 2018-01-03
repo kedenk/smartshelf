@@ -25,22 +25,87 @@ char rootTopic[] = "devices/weight/{%d}";
 char outTopic[20];
 float sensorData[] = {0.0,0.0,0.0,0.0};
 
+int ledOut[] = {7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+//Drawer1 7-9,Drawer2 10-12,Drawer3 13,15, Drawer4 16-18 
+
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
+  if( strcmp(topic,"devices/blink/start") == 0) {
+      Serial.println("devices/blink/start");
+      int *ledVal;
+      ledVal =  readJeson(payload);
+      
+      //Serial.println(ledVal[0]);
+     // Serial.println(ledVal[1]);
+    // call drawer to switch on the light
+      drawerOn(ledVal[0],ledVal[1]);
+    
+  }
+  if( strcmp(topic,"devices/blink/stop") == 0) {
+      Serial.println("devices/blink/stop");
+      int *ledVal;
+      ledVal =  readJeson(payload);
+      //Call drawer method to switch off the light 
+      Serial.println(ledVal[0]);
+      Serial.println(ledVal[1]);
+    
+  }
  
-  Serial.print("] ");
+ 
+  /*Serial.print("] ");
   for (int i=0;i<length;i++) {
     Serial.print((char)payload[i]);
-  }
-  readJeson(payload);
-  Serial.println();
+  }*/
+ 
+  //Serial.println();
 }
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
-void readJeson(const char json[]){
+void ledOn(int color, int pin){
+   switch(color){
+        case 0 :
+          Serial.println("red");
+          Serial.println(pin);
+          break;
+          
+        case 1:
+          Serial.print("blue");
+          Serial.println(pin);
+          break;
+        case 2:
+          Serial.print("yellow");
+          Serial.println(pin);
+          break;
+        default:
+          Serial.print("Led Number is out of bound") ;  
+      }
+}
+void drawerOn(int boxNumber, int color){
+  switch(boxNumber){
+    case 0:
+      Serial.println("boxOne Glowerd");
+      ledOn(color, 7);// 0th box start at pin 7
+      break;
+    case 1 :
+     Serial.println("boxTwo Glowerd");
+     ledOn(color, 10);// 1th box start at 10;
+     break;
+    case 2:
+     Serial.println("boxThree Glowerd");
+     ledOn(color, 13);// 2nd box start at 13
+     break;
+    case 3:
+      Serial.println("boxFour Glowerd");
+      ledOn(color, 16);//3rd box start at 16
+      break;
+    default:
+     Serial.print("No box found");
+  }
+}
+int* readJeson(const char json[]){
    //char json[] = ;
    StaticJsonBuffer<200> jsonBuffer;
    JsonObject& root = jsonBuffer.parseObject(json); 
@@ -48,12 +113,14 @@ void readJeson(const char json[]){
     Serial.println("parseObject() failed");
     return;
   }
-  int boxid = root["boxid"];
-  int color = root["color"];
+  static int r [] = {0,0};
+  r[0] = root["boxid"];
+  r[1] = root["color"];
   Serial.print("boxid : ");
-  Serial.println(boxid);
+  Serial.println(r[0]);
   Serial.print("color : ");
-  Serial.println(color);
+  Serial.println(r[1]);
+  return r;
   }
 void readSensors(){
   sensorData[0] = scale_d1.get_units();
@@ -145,8 +212,8 @@ void loop()
   }
   client.loop();
   
-  //sendWeights();
+  sendWeights();
 
-delay(1000);
+delay(5000);
 
 }
