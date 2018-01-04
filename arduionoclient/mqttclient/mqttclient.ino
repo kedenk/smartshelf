@@ -41,7 +41,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
      // Serial.println(ledVal[1]);
     // call drawer to switch on the light
       drawerOn(ledVal[0],ledVal[1]);
-    
+     
   }
   if( strcmp(topic,"devices/blink/stop") == 0) {
       Serial.println("devices/blink/stop");
@@ -50,6 +50,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
       //Call drawer method to switch off the light 
       Serial.println(ledVal[0]);
       Serial.println(ledVal[1]);
+      drawerOff(ledVal[0],ledVal[1]);
     
   }
  
@@ -64,24 +65,80 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
+void ledSetUp(){
+  for(int i = 7; i<=18; i++){
+    pinMode(i,OUTPUT);
+  }
+ // pinMode(7,OUTPUT);
+  
+}
 void ledOn(int color, int pin){
    switch(color){
         case 0 :
           Serial.println("red");
           Serial.println(pin);
+          digitalWrite(pin,HIGH);
+          delay(5000);
+          digitalWrite(pin,LOW);
           break;
           
         case 1:
           Serial.print("blue");
-          Serial.println(pin);
+          Serial.println(pin+1);
+          digitalWrite(pin+1,HIGH);
           break;
         case 2:
           Serial.print("yellow");
-          Serial.println(pin);
+          Serial.println(pin+2);
+          digitalWrite(pin+2,HIGH);
           break;
         default:
           Serial.print("Led Number is out of bound") ;  
       }
+}
+void ledOff(int color, int pin){
+   switch(color){
+        case 0 :
+          Serial.println("red");
+          Serial.println(pin);
+          digitalWrite(pin,LOW);
+          break;
+          
+        case 1:
+          Serial.print("blue");
+          Serial.println(pin+1);
+           digitalWrite(pin+1,LOW);
+          break;
+        case 2:
+          Serial.print("yellow");
+          Serial.println(pin+2);
+          digitalWrite(pin+2,LOW);
+          break;
+        default:
+          Serial.print("Led Number is out of bound") ;  
+      }
+}
+void drawerOff(int boxNumber, int color){
+  switch(boxNumber){
+    case 0:
+      Serial.println("boxOne Glowerd");
+      ledOff(color, 7);// 0th box start at pin 7
+      break;
+    case 1 :
+     Serial.println("boxTwo Glowerd");
+     ledOff(color, 10);// 1th box start at 10;
+     break;
+    case 2:
+     Serial.println("boxThree Glowerd");
+     ledOff(color, 13);// 2nd box start at 13
+     break;
+    case 3:
+      Serial.println("boxFour Glowerd");
+      ledOff(color, 16);//3rd box start at 16
+      break;
+    default:
+     Serial.print("No box found");
+  }
 }
 void drawerOn(int boxNumber, int color){
   switch(boxNumber){
@@ -189,7 +246,7 @@ void setup()
   scale_d4.set_scale(calibration_factor); //This value is obtained by using the SparkFun_HX711_Calibration sketch
   scale_d4.tare();
   // Set up jeson buffer 
- 
+  ledSetUp();
   Serial.begin(57600);
   client.setServer(server, 1883);
   client.setCallback(callback);
