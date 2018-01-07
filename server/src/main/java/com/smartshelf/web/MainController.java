@@ -3,12 +3,15 @@ package com.smartshelf.web;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,16 +34,18 @@ public class MainController {
 	
 	@Autowired
 	private ItemDao itemDao; 
-	
 	@Autowired 
 	private BoxDao boxDao; 
 	
 	@Autowired
 	private ClientConnection clientConnection;
 	
+	@Autowired
+	private HttpServletRequest request;
+	
     @RequestMapping(value = { "/" }, method = RequestMethod.GET)
     public String index(Model model, @RequestParam("searchParam") Optional<String> searchParam) {
-    	model.addAttribute("serverurl", "localhost");
+
     	// add views to index.html
     	setMaster(model, "searchTemplate");
     	
@@ -155,4 +160,14 @@ public class MainController {
     	
     	return model;
     }
+    
+    /***
+     * Set the variable 'serverurl' in the model for every request
+     * @return
+     */
+    @ModelAttribute("serverurl")
+    public String getLocalAddr() {
+        return request.getLocalAddr();
+    }
+    
 }

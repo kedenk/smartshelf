@@ -36,7 +36,7 @@
     </div>
 </noscript>
 
-<div class="master" th:if="${masterview} != null">
+<div class="master col-md-12" th:if="${masterview} != null">
 	<!-- <div th:replace="searchTemplate :: content"></div> -->
 	<div th:replace="${masterview} :: content"></div>
 </div>
@@ -49,10 +49,14 @@
    	</div>
    	
     <br/>
-
-    <footer th:replace="footer :: footer">
-    </footer>
+    
+    <div class="row col-md-12">
+	    <footer th:replace="footer :: footer">
+	    </footer>
+	</div>
 </div> <!-- /container -->
+
+
 
 
 <!-- Bootstrap core JavaScript
@@ -105,8 +109,8 @@
  			
  			var sp_uriencoded = encodeURI( keyword );
  			console.log("Search parameter: " + sp_uriencoded); 
- 			
- 			window.location.href='http://' + [[${@environment.getProperty('server.url')}]] + ':' + [[${@environment.getProperty('server.port')}]] + '/?searchParam=' + sp_uriencoded;
+ 			console.log([[${serverurl}]]);
+ 			window.location.href='http://' + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + '/?searchParam=' + sp_uriencoded;
  		}
 	});
 

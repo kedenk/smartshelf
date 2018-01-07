@@ -71,7 +71,7 @@
 	
 		function sendBlinkSignal(boxid, color) {
 			
-			var _url = "http://" + [[${@environment.getProperty('server.url')}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/box/signal/start/" + boxid + "/" + color; 
+			var _url = "http://" + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/box/signal/start/" + boxid + "/" + color; 
 			
 			 $.ajax({
 			        type: "POST",

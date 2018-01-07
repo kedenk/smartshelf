@@ -1,5 +1,7 @@
 package com.smartshelf;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -19,12 +21,14 @@ public class Application {
 	private final static Logger log = LoggerFactory.getLogger(Application.class);
 	
 	private static ApplicationContext context;
+	private static final long CONNECT_TIMEOUT = 5000;
 	
     public static void main(String[] args) {
         context = SpringApplication.run(Application.class, args);
         
         startMqttClient();
     }
+    
     
     private static void startMqttClient() {
     
@@ -34,27 +38,27 @@ public class Application {
             public void run() {
                
             	MqttService client = (MqttService) context.getBean(MqttService.class);
-                try {
-                	
-                	// tries to connect to broker
-                	while( !client.isConnected() ) {
+            	while( !client.isConnected() ) {
+            		
+	            	try {
                 		client.connect();
                 		
-                		// TODO implement delay!?
-                	}
-                	log.info("Mqtt client connected.");
-                	
-        			client.setMessageCallback(new MqttCallbackImpl());
-
-        			List<String> topics = MqttConfig.getStdTopics();
-        			
-        			for( String topic : topics ) {
-        				client.subscribe(topic);
-        			}
-        			
-        		} catch (MqttException e) {
-        			log.error(e.getMessage());
-        		}
+                		Thread.sleep(CONNECT_TIMEOUT);
+	                	
+	                	log.info("Mqtt client connected.");
+	                	
+	        			client.setMessageCallback(new MqttCallbackImpl());
+	
+	        			List<String> topics = MqttConfig.getStdTopics();
+	        			
+	        			for( String topic : topics ) {
+	        				client.subscribe(topic);
+	        			}
+	        			
+	        		} catch (MqttException | InterruptedException e) {
+	        			log.error(e.getMessage());
+	        		}
+            	}
             }
         });
 

@@ -6,8 +6,15 @@
  
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron" th:fragment="content">
-	<div class="row-element">
-        <div class="qrscanner" id="scanner">
+	<div class="row col-md-6 col-md-offset-3">
+		<div class="panel panel-primary">
+		  <div class="panel-heading"><h4>QR-Code Scanner</h4></div>
+		  <div class="panel-body">
+		  	Scan the QR-Code on a box to get more information about the contained item.
+		  </div>
+		</div>	
+		
+        <div class="qrscanner col-md-6" id="scanner">
         </div>
     </div>
 
@@ -17,7 +24,7 @@
  			
  			console.log("Fetching data for " + boxid);
  			
- 			window.location.href="http://" + [[${@environment.getProperty('server.url')}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/qrscanner/info/box/" + boxid;
+ 			window.location.href="http://" + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/qrscanner/info/box/" + boxid;
  		}
  		
         function onQRCodeScanned(scannedText)
