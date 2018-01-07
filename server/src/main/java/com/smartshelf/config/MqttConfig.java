@@ -10,6 +10,7 @@ import com.smartshelf.mqtt.MessageHandler;
 import com.smartshelf.mqtt.MqttClientImpl;
 import com.smartshelf.mqtt.MqttMessageHandler;
 import com.smartshelf.mqtt.MqttService;
+import com.smartshelf.services.ClientConnection;
 
 @Configuration
 public class MqttConfig {
@@ -21,7 +22,7 @@ public class MqttConfig {
 	public MqttConfig() {
 		
 		topics = new ArrayList<String>(); 
-		topics.add("devices/weight"); 
+		topics.add("devices/weight/#"); 
 	}
 	
 	@Bean
@@ -33,6 +34,11 @@ public class MqttConfig {
 	@Bean
 	public MqttMessageHandler mqttMessageHandler() {
 		return new MessageHandler(); 
+	}
+	
+	@Bean 
+	public ClientConnection clientConnection() {
+		return new ClientConnection(); 
 	}
 	
 	public static List<String> getStdTopics() {

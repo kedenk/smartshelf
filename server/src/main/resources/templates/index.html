@@ -68,6 +68,27 @@
 
 	$(document).ready(function() {
 
+		// focus always of main search field
+		$('#main-search-field').focus().select();
+		
+		$('#navbar-search-field').keydown( function(e) {
+	        var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+	        if(key == 13) {
+	            e.preventDefault();
+
+	            $("#navbar-search-button").click();
+	        }
+	    });
+		
+		$('#main-search-field').keydown( function(e) {
+	        var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+	        if(key == 13) {
+	            e.preventDefault();
+
+	            $("#main-search-submit").click();
+	        }
+	    });
+		
  		$("#main-search-submit").click(function() {
  			
  			var searchparam = $("#main-search-field").val(); 

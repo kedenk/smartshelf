@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smartshelf.dao.BoxDao;
 import com.smartshelf.dao.ItemDao;
-import com.smartshelf.mail.SimpleOrderManager;
 import com.smartshelf.model.Box;
 import com.smartshelf.model.Item;
+import com.smartshelf.services.ClientConnection;
 
 @Controller
 public class MainController {
@@ -26,10 +27,16 @@ public class MainController {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
+	private ApplicationContext context;
+	
+	@Autowired
 	private ItemDao itemDao; 
 	
 	@Autowired 
 	private BoxDao boxDao; 
+	
+	@Autowired
+	private ClientConnection clientConnection;
 	
     @RequestMapping(value = { "/" }, method = RequestMethod.GET)
     public String index(Model model, @RequestParam("searchParam") Optional<String> searchParam) {
@@ -46,9 +53,29 @@ public class MainController {
     		
     		List<Item> result = itemDao.findWithKeyword(searchParam.get()); 
     		model.addAttribute("searchResult", result); 
+    		
+    		model.addAttribute("currentSignals", clientConnection);
     	}
     	
         return "index";
+    }
+    
+    @RequestMapping(value = "/searchdetail", method = RequestMethod.GET)
+    public @ResponseBody String getSearchDetail(Model model, @RequestParam("searchParam") Optional<String> searchParam) throws Exception {
+    	
+    	if( searchParam.isPresent() && !searchParam.get().isEmpty() ) {
+    		
+    		setDetail(model, "detailResultTemplate");
+    		model.addAttribute("searchParam", searchParam.get()); 
+    		
+    		List<Item> result = itemDao.findWithKeyword(searchParam.get()); 
+    		model.addAttribute("searchResult", result); 
+    		
+    		return "detailResultTemplate";
+    	
+    	}
+    	
+    	throw new Exception("No search parameter was defined.");
     }
     
     @RequestMapping(value = { "/qrscanner" }, method = RequestMethod.GET)
@@ -96,6 +123,20 @@ public class MainController {
     public @ResponseBody Box getBox(@PathVariable("boxid") long boxid) {
     	boxDao.setEntityClass(Box.class);
     	return boxDao.findById(boxid);             
+    }
+    
+    @RequestMapping(value = "/box/signal/start/{boxid}/{color}", method = RequestMethod.POST)
+    public @ResponseBody Boolean signalBox(@PathVariable("boxid") long boxid, @PathVariable("color") String color) {
+    	
+    	log.info("Publish blink signal for box: " + boxid);
+    	
+    	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class); 
+    	
+    	if( con != null ) {
+    		return con.startBlinkCommand(boxid, color);
+    	}
+    	
+    	return false;
     }
     
     private Model setDetail(Model model, String detail) {

@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -53,6 +55,7 @@ public class MqttClientImpl implements MqttService {
 		try {
 			
 			this.client.disconnect();
+			this.client = null;
 			
 		} catch (MqttException e) {
 			log.error(e.getMessage());
@@ -112,7 +115,7 @@ public class MqttClientImpl implements MqttService {
 	@Override
 	public Boolean isConnected() {
 		
-		if( this.client != null || this.client.isConnected() ) {
+		if( this.client != null && this.client.isConnected() ) {
 			return true; 
 		}
 		
@@ -125,5 +128,11 @@ public class MqttClientImpl implements MqttService {
 		if( this.client != null && callback != null ) {
 			this.client.setCallback(callback);
 		}
+	}
+	
+	@PreDestroy
+	public void destroy() {
+		
+		this.disconnect();
 	}
 }

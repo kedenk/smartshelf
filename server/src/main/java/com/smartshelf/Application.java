@@ -36,7 +36,14 @@ public class Application {
             	MqttService client = (MqttService) context.getBean(MqttService.class);
                 try {
                 	
-        			client.connect();
+                	// tries to connect to broker
+                	while( !client.isConnected() ) {
+                		client.connect();
+                		
+                		// TODO implement delay!?
+                	}
+                	log.info("Mqtt client connected.");
+                	
         			client.setMessageCallback(new MqttCallbackImpl());
 
         			List<String> topics = MqttConfig.getStdTopics();

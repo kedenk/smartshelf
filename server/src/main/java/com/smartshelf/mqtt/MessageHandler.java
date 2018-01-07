@@ -12,25 +12,21 @@ public class MessageHandler implements MqttMessageHandler {
 	
 	private final String strEncoding = "UTF-8"; 
 	
-	private final String MEASUREMENT_TOPIC = "devices/weight"; 
+	// after the last '/' will be the boxid
+	private final String BOX_WEIGHT = "devices/weight/"; 
 	
 	@Override
 	public void handleMessage(String topic, MqttMessage message) {
 		
 		try {
 			
-			log.debug(String.format("Handle message from topic '%s': %s", topic, this.convertPayload(message.getPayload())));
+			log.info(String.format("Handle message from topic '%s': %s", topic, this.convertPayload(message.getPayload())));
 			
 			
-			switch(topic) {
-			
-				case MEASUREMENT_TOPIC:
-					handleMeasurement(message); 
-					break;
+			if( topic.startsWith( this.BOX_WEIGHT) ) {
 				
-				default: 
-					log.warn(String.format("Message from undefined topic received: %s", topic));
-			}
+				this.handleWeightMeasurement(topic, message);
+			} 
 			
 			
 		} catch (UnsupportedEncodingException e) {
@@ -40,7 +36,21 @@ public class MessageHandler implements MqttMessageHandler {
 		
 	}
 	
-	private void handleMeasurement(MqttMessage message) {
+	private void handleWeightMeasurement(String topic, MqttMessage message) {
+		
+		// last part of the topic is the box id
+		String[] topic_parts = topic.split("/"); 
+		String str_boxId = topic_parts[topic_parts.length - 1];
+		long boxId = -1; 
+		
+		try {
+		if( str_boxId != null ) {
+			boxId = Long.parseLong(str_boxId); 
+		}
+		} catch(NumberFormatException e) {
+			log.warn(String.format("Topic contains no parsable box id (%s).", topic));
+			return; 
+		}
 		
 		log.error("NOT IMPLEMENTED YET!!!!!!");
 	}
