@@ -33,5 +33,13 @@ public class AbstractGenericDao<Entity extends Serializable> {
 	public Entity findById(long id) {
 		return entityManager.find(entityType, id);
 	}
+	
+	
+	public Entity save(Entity entity) {
+		return entityManager.merge(entity);
+	}
 
+	public void delete(Entity entity) {
+		entityManager.remove(entity);
+	}
 }

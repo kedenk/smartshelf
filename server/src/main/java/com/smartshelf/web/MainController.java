@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class MainController {
 	
     @RequestMapping(value = { "/" }, method = RequestMethod.GET)
     public String index(Model model, @RequestParam("searchParam") Optional<String> searchParam) {
-
+    	
     	// add views to index.html
     	setMaster(model, "searchTemplate");
     	

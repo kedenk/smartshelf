@@ -1,12 +1,12 @@
-package com.smartshelf.model;
+	package com.smartshelf.model;
 
 import net.minidev.asm.ex.ConvertException;
 
 public enum LEDColor {
 
-	YELLOW(1), 
-	BLUE(0), 
-	RED(2);
+	YELLOW(2), 
+	BLUE(1), 
+	RED(0);
 	
 	private final int value;
     

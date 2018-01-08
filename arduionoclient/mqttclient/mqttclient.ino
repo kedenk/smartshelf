@@ -1,8 +1,10 @@
-#include <ArduinoJson.h>
-#include "HX711.h"
 #include <SPI.h>
 #include <Ethernet.h>
-#include <PubSubClient.h>
+
+#include "ArduinoJson.h"
+#include "PubSubClient.h"
+#include "HX711.h"
+
 //reding sensors:initializing pins
 #define calibration_factor 208 //This value is obtained using the SparkFun_HX711_Calibration sketch
 
@@ -20,10 +22,17 @@ HX711 scale_d4(DOUT_D4, CLK);
 // Update these with values suitable for your network.
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress ip(172, 16, 0, 100);
-IPAddress server(172, 16, 0, 105);
+IPAddress server(172, 16, 0, 101);
 char rootTopic[] = "devices/weight/{%d}";
 char outTopic[20];
 float sensorData[] = {0.0,0.0,0.0,0.0};
+
+EthernetClient ethClient;
+PubSubClient client(ethClient);
+
+const unsigned long SEND_WEIGHT_DELAY = 5000;
+unsigned long onTime = 0; 
+
 
 int ledOut[] = {7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
 //Drawer1 7-9,Drawer2 10-12,Drawer3 13,15, Drawer4 16-18 
@@ -32,17 +41,15 @@ int ledOut[] = {7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
+  
   if( strcmp(topic,"devices/blink/start") == 0) {
       Serial.println("devices/blink/start");
       int *ledVal;
       ledVal =  readJeson(payload);
-      
-      //Serial.println(ledVal[0]);
-     // Serial.println(ledVal[1]);
-    // call drawer to switch on the light
       drawerOn(ledVal[0],ledVal[1]);
      
   }
+  
   if( strcmp(topic,"devices/blink/stop") == 0) {
       Serial.println("devices/blink/stop");
       int *ledVal;
@@ -53,115 +60,114 @@ void callback(char* topic, byte* payload, unsigned int length) {
       drawerOff(ledVal[0],ledVal[1]);
     
   }
- 
- 
-  /*Serial.print("] ");
-  for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]);
-  }*/
- 
-  //Serial.println();
 }
 
-EthernetClient ethClient;
-PubSubClient client(ethClient);
+
 void ledSetUp(){
-  for(int i = 7; i<=18; i++){
-    pinMode(i,OUTPUT);
+  for(int i = 22; i <= 34; i++){
+    pinMode(i, OUTPUT);
   }
- // pinMode(7,OUTPUT);
-  
 }
+
+
 void ledOn(int color, int pin){
    switch(color){
         case 0 :
           Serial.println("red");
           Serial.println(pin);
-          digitalWrite(pin,HIGH);
-          delay(5000);
-          digitalWrite(pin,LOW);
+          digitalWrite(pin, HIGH);
           break;
           
         case 1:
           Serial.print("blue");
-          Serial.println(pin+1);
-          digitalWrite(pin+1,HIGH);
+          Serial.println(pin + 1);
+          digitalWrite(pin + 1, HIGH);
           break;
+          
         case 2:
           Serial.print("yellow");
-          Serial.println(pin+2);
-          digitalWrite(pin+2,HIGH);
+          Serial.println(pin + 2);
+          digitalWrite(pin + 2, HIGH);
           break;
+          
         default:
           Serial.print("Led Number is out of bound") ;  
       }
 }
+
+
 void ledOff(int color, int pin){
    switch(color){
         case 0 :
           Serial.println("red");
           Serial.println(pin);
-          digitalWrite(pin,LOW);
+          digitalWrite(pin, LOW);
           break;
           
         case 1:
           Serial.print("blue");
-          Serial.println(pin+1);
-           digitalWrite(pin+1,LOW);
+          Serial.println(pin + 1);
+           digitalWrite(pin + 1, LOW);
           break;
         case 2:
           Serial.print("yellow");
-          Serial.println(pin+2);
-          digitalWrite(pin+2,LOW);
+          Serial.println(pin + 2);
+          digitalWrite(pin + 2, LOW);
           break;
         default:
           Serial.print("Led Number is out of bound") ;  
       }
 }
+
+
 void drawerOff(int boxNumber, int color){
   switch(boxNumber){
     case 0:
       Serial.println("boxOne Glowerd");
-      ledOff(color, 7);// 0th box start at pin 7
+      ledOff(color, 22);// 0th box start at pin 7
       break;
     case 1 :
      Serial.println("boxTwo Glowerd");
-     ledOff(color, 10);// 1th box start at 10;
+     ledOff(color, 25);// 1th box start at 10;
      break;
     case 2:
      Serial.println("boxThree Glowerd");
-     ledOff(color, 13);// 2nd box start at 13
+     ledOff(color, 28);// 2nd box start at 13
      break;
     case 3:
       Serial.println("boxFour Glowerd");
-      ledOff(color, 16);//3rd box start at 16
+      ledOff(color, 31);//3rd box start at 16
       break;
     default:
      Serial.print("No box found");
   }
 }
+
+
 void drawerOn(int boxNumber, int color){
   switch(boxNumber){
     case 0:
-      Serial.println("boxOne Glowerd");
-      ledOn(color, 7);// 0th box start at pin 7
+      Serial.println("box 0 Glowerd");
+      ledOn(color, 22);// 0th box start at pin 7
       break;
     case 1 :
-     Serial.println("boxTwo Glowerd");
-     ledOn(color, 10);// 1th box start at 10;
+     Serial.println("box 1 Glowerd");
+     ledOn(color, 25);// 1th box start at 10;
      break;
     case 2:
-     Serial.println("boxThree Glowerd");
-     ledOn(color, 13);// 2nd box start at 13
+     Serial.println("box 2 Glowerd");
+     ledOn(color, 28);// 2nd box start at 13
      break;
     case 3:
-      Serial.println("boxFour Glowerd");
-      ledOn(color, 16);//3rd box start at 16
+      Serial.println("box 3 Glowerd");
+      ledOn(color, 31);//3rd box start at 16
       break;
     default:
      Serial.print("No box found");
   }
 }
+
+
 int* readJeson(const char json[]){
    //char json[] = ;
    StaticJsonBuffer<200> jsonBuffer;
@@ -178,7 +184,16 @@ int* readJeson(const char json[]){
   Serial.print("color : ");
   Serial.println(r[1]);
   return r;
-  }
+}
+
+
+void subscribe() {
+   client.subscribe("inTopic");
+   client.subscribe("devices/blink/start");
+   client.subscribe("devices/blink/stop");
+}
+
+
 void readSensors(){
   sensorData[0] = scale_d1.get_units();
   sensorData[1] = scale_d2.get_units();
@@ -186,11 +201,8 @@ void readSensors(){
   sensorData[3] = scale_d4.get_units();
   
 }
-void subscribe(){
-   client.subscribe("inTopic");
-   client.subscribe("devices/blink/start");
-   client.subscribe("devices/blink/stop");
-   }
+
+   
 void sendWeights() {
   readSensors();
       // Once connected, publish an announcement...
@@ -203,10 +215,10 @@ void sendWeights() {
         client.publish(outTopic, sensorVal);
         Serial.println(outTopic);
         Serial.println(sensorVal);
-       
-  
       }
 }
+
+
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -215,19 +227,15 @@ void reconnect() {
     
     if (client.connect("arduinoClient")) {
       Serial.println("connected");
-     
-      
-     
+
       subscribe();
-     
       
     } else {
       
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      
-      
+          
       // Wait 5 seconds before retrying
       delay(5000);
     }
@@ -254,23 +262,20 @@ void setup()
   Ethernet.begin(mac, ip);
   // Allow the hardware to sort itself out
   delay(1500);
-
-  //for testing jeson
- 
-
- 
 }
 
 void loop()
 {
+  // connect to mqtt broker
   if (!client.connected()) {
     reconnect();
-   
   }
   client.loop();
   
-  sendWeights();
-
-delay(5000);
+  unsigned long currentOnTime = millis();
+  if( (currentOnTime - onTime >= SEND_WEIGHT_DELAY) && client.connected() ) {
+    onTime = currentOnTime;
+    sendWeights();
+  }
 
 }
