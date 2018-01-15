@@ -14,8 +14,8 @@
             <th>Name</th>
             <th>Description</th>
             <th>Amount</th>
-            <th></th>
-            <th></th>
+            <th>Information</th>
+            <th>Selection</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -26,7 +26,17 @@
 		    <td th:text="${item.name}"></td>
 		    <td th:text="${item.description}"></td>
 		    <td th:text="${item.box.amount}"></td>
-		    <td><button type="button" 
+		    <td><button type="button"
+		    	class="btn btn-default"
+		    	th:onclick="|showItemInfoPage('${item.box.id}')|"
+		    	>Show Info</button>
+	    	</td>
+	    	<td><button type="button"
+	    		class="btn btn-default"
+	    		th:onclick="|selectBox('${item.box.id}')|"
+	    		>Select</button>
+	    	</td>
+		    <!-- <td><button type="button" 
 		    	class="btn btn-default" 
 		    	th:onclick="|sendBlinkSignal('${item.box.id}', 'blue')|" 
 		    	th:disabled="${currentSignals.isBlinkSignal(item.box.id, 'blue')}"
@@ -35,7 +45,7 @@
 		    	class="btn btn-default" 
 		    	th:onclick="|sendBlinkSignal('${item.box.id}', 'yellow')|"
 		    	th:disabled="${currentSignals.isBlinkSignal(item.box.id, 'yellow')}"
-		    	>Yellow</button></td>
+		    	>Yellow</button></td>  -->
 		    <td th:text="${item.status}"></td>
 		</tr>
     </tbody>
@@ -64,41 +74,41 @@
 
 <script type="text/javascript" th:inline="javascript">
 
-		function refreshPage() {
-			console.log("refresh page");
-			window.location.reload(true);
-		}
+function refreshPage() {
+	console.log("refresh page");
+	window.location.reload(true);
+}
+
+function sendBlinkSignal(boxid, color) {
 	
-		function sendBlinkSignal(boxid, color) {
-			
-			var _url = "http://" + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/box/signal/start/" + boxid + "/" + color; 
-			
-			 $.ajax({
-			        type: "POST",
-			        url: _url,
-			        cache: false,
-			        timeout: 600000,
-			        success: function (data) {
+	var _url = "http://" + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/box/signal/start/" + boxid + "/" + color; 
 	
-			            console.log("Successfully send request.", data);
-			            
-			            if( !data ) { 
-			            	
-			            	$('#NAModal').modal('show');
-			            	
-			            } else { 
-			            	
-			            	refreshPage();
-			            	
-			            }
-	
-			        },
-			        error: function (e) {
-	
-			            console.log("ERROR : ", e);
-			        }
-			    });
-		}
+	 $.ajax({
+	        type: "POST",
+	        url: _url,
+	        cache: false,
+	        timeout: 600000,
+	        success: function (data) {
+
+	            console.log("Successfully send request.", data);
+	            
+	            if( !data ) { 
+	            	
+	            	$('#NAModal').modal('show');
+	            	
+	            } else { 
+	            	
+	            	refreshPage();
+	            	
+	            }
+
+	        },
+	        error: function (e) {
+
+	            console.log("ERROR : ", e);
+	        }
+	    });
+}
 </script>
 </div>
 

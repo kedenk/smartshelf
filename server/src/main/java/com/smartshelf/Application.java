@@ -1,7 +1,5 @@
 package com.smartshelf;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -21,7 +19,7 @@ public class Application {
 	private final static Logger log = LoggerFactory.getLogger(Application.class);
 	
 	private static ApplicationContext context;
-	private static final long CONNECT_TIMEOUT = 5000;
+	private static final long CONNECT_TIMEOUT = 10000;
 	
     public static void main(String[] args) {
         context = SpringApplication.run(Application.class, args);
@@ -42,8 +40,6 @@ public class Application {
             		
 	            	try {
                 		client.connect();
-                		
-                		Thread.sleep(CONNECT_TIMEOUT);
 	                	
 	                	log.info("Mqtt client connected.");
 	                	
@@ -55,8 +51,15 @@ public class Application {
 	        				client.subscribe(topic);
 	        			}
 	        			
-	        		} catch (MqttException | InterruptedException e) {
+	        		} catch (MqttException e) {
 	        			log.error(e.getMessage());
+	        			log.error("Next try to connect in " + CONNECT_TIMEOUT + "ms.");
+	        			
+	        			try {
+							Thread.sleep(CONNECT_TIMEOUT);
+						} catch (InterruptedException e1) {
+							log.error(e1.getMessage());
+						}
 	        		}
             	}
             }

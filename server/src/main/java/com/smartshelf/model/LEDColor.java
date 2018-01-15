@@ -4,11 +4,12 @@ import net.minidev.asm.ex.ConvertException;
 
 public enum LEDColor {
 
-	YELLOW(2), 
+	RED(0),
 	BLUE(1), 
-	RED(0);
+	YELLOW(2);
 	
 	private final int value;
+    private final static LEDColor[] values = LEDColor.values();
     
     private LEDColor(int value){
         this.value = value;
@@ -20,6 +21,10 @@ public enum LEDColor {
     
     public String getStr() {
     	return String.valueOf(value);
+    }
+    
+    public static LEDColor getLEDColor(int i) {
+    	return values[i];
     }
     
     public static LEDColor getLEDColor(String color) {
@@ -40,5 +45,10 @@ public enum LEDColor {
 		}
     	
     	return c; 
+    }
+    
+    @Override
+    public String toString() {
+    	return super.toString().toLowerCase();
     }
 }

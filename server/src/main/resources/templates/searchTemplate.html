@@ -22,6 +22,13 @@
         <button type="button" id="main-search-submit" 
         	class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-search"></span> Search
        	</button>
+       	
+       	<div th:if="${errormsg}" class="panel panel-danger">
+       		<div class="panel-heading">We are sorry for the error...</div>
+       		<div class="panel-body">
+       			<p th:text="${errormsg}"></p>
+       		</div>
+       	</div>
 
     </div>
 </div>

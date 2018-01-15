@@ -40,35 +40,46 @@ public class ClientConnection {
 	 */
 	public Boolean startBlinkCommand(long boxid, String color) {
 
-		BlinkCommandMsg msg = this.createBlinkCommandMsg(boxid, color); 
+		BlinkCommandMsg msg = createBlinkCommandMsg(boxid, color); 
 		
-		// check if LED is already blinking
-		if( !isBlinkSignal(msg) ) {
-			String jsonMsg = this.buildBlinkCommandMsg(msg);
-			if( jsonMsg != null ) {
-				log.info(String.format("Send blink start command for box %s. Message: %s", boxid, jsonMsg));
-				this.mqttService.publish(BLINK_COMMAND_START_TOPIC, jsonMsg.getBytes());
-				
-				try {
-					addBlinkSignal(msg);
-				} catch (Exception e) {
-					log.error(e.getMessage());
-				}
-				
-				// setup blink stop timer
-				this.setBlinkStopTimer(msg);
-				return true;
+		String jsonMsg = this.buildBlinkCommandMsg(msg);
+		if( jsonMsg != null ) {
+			log.info(String.format("Send blink start command for box %s. Message: %s", boxid, jsonMsg));
+			this.mqttService.publish(BLINK_COMMAND_START_TOPIC, jsonMsg.getBytes());
+			
+			try {
+				addBlinkSignal(msg);
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
-		} 
+			
+			// setup blink stop timer
+			this.setBlinkStopTimer(msg);
+			return true;
+		}
 		
 		return false; 
 	}
 	
-	public void stopBlinkCommand(long boxid, String color) {
+	public Boolean selectOneSignal(long boxid) {
 		
-		BlinkCommandMsg msg = this.createBlinkCommandMsg(boxid, color); 
+		for(BlinkCommandMsg entry : currentSignals) {
+			
+			if( entry.boxid == boxid ) {
+				continue;
+			}
+			this.stopBlinkCommand(Long.valueOf(entry.boxid), LEDColor.getLEDColor(entry.color).toString());
+		}
+		
+		return true; 
+	}
+	
+	public Boolean stopBlinkCommand(long boxid, String color) {
+		
+		BlinkCommandMsg msg = createBlinkCommandMsg(boxid, color); 
 		
 		this.stopBlinkCommand(msg);
+		return true;
 	}
 	
 	public void stopBlinkCommand(BlinkCommandMsg msg) {
@@ -157,5 +168,9 @@ public class ClientConnection {
 	
 	public static List<BlinkCommandMsg> getCurrentSignals() {
 		return currentSignals;
+	}
+	
+	public static LEDColor getFreeColor() {
+		return LEDColor.BLUE; // TODO IMPLEMENT
 	}
 }

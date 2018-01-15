@@ -1,51 +1,40 @@
 package com.smartshelf.web;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.smartshelf.dao.BoxDao;
-import com.smartshelf.dao.ItemDao;
 import com.smartshelf.model.Box;
 import com.smartshelf.model.Item;
+import com.smartshelf.model.LEDColor;
+import com.smartshelf.services.BlinkCommandMsg;
 import com.smartshelf.services.ClientConnection;
 
 @Controller
-public class MainController {
-
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired
-	private ApplicationContext context;
-	
-	@Autowired
-	private ItemDao itemDao; 
-	@Autowired 
-	private BoxDao boxDao; 
+public class MainController extends AbstractController {
 	
 	@Autowired
 	private ClientConnection clientConnection;
 	
-	@Autowired
-	private HttpServletRequest request;
-	
     @RequestMapping(value = { "/" }, method = RequestMethod.GET)
     public String index(Model model, @RequestParam("searchParam") Optional<String> searchParam) {
+    	
+    	model = this.prepareSearchPage(model, searchParam, true);
+    	
+        return "index";
+    }
+    
+    public Model prepareSearchPage(Model model, Optional<String> searchParam, Boolean sendBlinkSignal) {
     	
     	// add views to index.html
     	setMaster(model, "searchTemplate");
@@ -61,9 +50,23 @@ public class MainController {
     		model.addAttribute("searchResult", result); 
     		
     		model.addAttribute("currentSignals", clientConnection);
+    		
+    		if( sendBlinkSignal ) {
+    			this.startSignal(result);
+    		}
     	}
     	
-        return "index";
+    	return model;
+    }
+    
+    @RequestMapping(value = "/box/select/{boxid}", method = RequestMethod.POST)
+    public @ResponseBody void selectBox(@PathVariable("boxid") long boxid) {
+    	
+    	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class);
+		if( con != null ) {
+		
+			con.selectOneSignal(boxid);
+		}
     }
     
     @RequestMapping(value = "/searchdetail", method = RequestMethod.GET)
@@ -78,44 +81,28 @@ public class MainController {
     		model.addAttribute("searchResult", result); 
     		
     		return "detailResultTemplate";
-    	
     	}
     	
     	throw new Exception("No search parameter was defined.");
+    }
+    
+    private void startSignal(List<Item> list) {
+    	
+    	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class);
+		if( con != null ) {
+    		String color = ClientConnection.getFreeColor().toString().toLowerCase();
+    		
+    		for(Item item : list) {
+    			
+    			con.startBlinkCommand(item.box.getId(), color);
+    		}
+    	}
     }
     
     @RequestMapping(value = { "/qrscanner" }, method = RequestMethod.GET)
     public String qrcodescanner(Model model) {
     	
     	setViews(model, "qrscanner", null);    	
-    	return "index";
-    }
-    
-    @RequestMapping(value = "/qrscanner/info/box/{boxid}", method = RequestMethod.GET)
-    public String getInfo(Model model, @PathVariable("boxid") String boxid) {
-    	model.addAttribute("serverurl", "localhost");
-    	Box b = null; 
-    	try {
-    		long id = Long.parseLong(boxid);
-        	boxDao.setEntityClass(Box.class);
-        	b = boxDao.findById(id); 
-    	} catch(Exception e) {
-    		log.debug(String.format("Bad box id submited. (%s)", boxid));
-    	}
-    	
-    	if( b != null ) {
-    		setViews(model, null, "datasheet");
-    		model.addAttribute("boxid", b.id); 
-    		model.addAttribute("itemname", b.item.name);
-    		model.addAttribute("datasheet", b.item.datasheet);
-    	}
-    	else 
-    	{
-    		setViews(model, "qrscanner", "errormsg"); 
-    		model.addAttribute("errormsg", "No box with the given ID found. Maybe this QR-Code is corrupt.");
-    	}
-    	
-    	
     	return "index";
     }
     
@@ -139,36 +126,53 @@ public class MainController {
     	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class); 
     	
     	if( con != null ) {
+    		color.toLowerCase().trim();
     		return con.startBlinkCommand(boxid, color);
     	}
     	
     	return false;
     }
     
-    private Model setDetail(Model model, String detail) {
-    	model.addAttribute("detailview", detail);
-    	return model; 
-    }
-    
-    private Model setMaster(Model model, String master) {
-    	model.addAttribute("masterview", master);
-    	return model;
-    }
-    
-    private Model setViews(Model model, String master, String detail) {
-    	model.addAttribute("masterview", master);
-    	model.addAttribute("detailview", detail);
+    @RequestMapping(value = "/box/signal/stop/{boxid}/{color}", method = RequestMethod.POST)
+    public @ResponseBody Boolean stopSignalBox(@PathVariable("boxid") long boxid, @PathVariable("color") String color) {
     	
-    	return model;
+    	log.info("Publish stop blink signal for box: " + boxid);
+    	
+    	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class); 
+    	
+    	if( con != null ) {
+    		color = color.toLowerCase().trim();
+    		return con.stopBlinkCommand(boxid, color);
+    	}
+    	
+    	return false;
     }
     
-    /***
-     * Set the variable 'serverurl' in the model for every request
-     * @return
-     */
-    @ModelAttribute("serverurl")
-    public String getLocalAddr() {
-        return request.getLocalAddr();
+    @RequestMapping(value = "/info/search/amount", method = RequestMethod.GET)
+    public @ResponseBody int getCurrentSearches() {
+    	return this.clientConnection.getCurrentSignals().size();
     }
     
+    @RequestMapping(value = "/info/search/detailspage", method = RequestMethod.GET)
+    public String getSearchDetailsPage(Model model) {
+    	
+    	class DataContainer {
+    		public long boxid; 
+    		public String color; 
+    	}
+    	List<BlinkCommandMsg> msgs = this.clientConnection.getCurrentSignals();    	
+    	
+    	List<DataContainer> result = new ArrayList<DataContainer>();
+    	
+    	for(BlinkCommandMsg msg : msgs) {
+    		DataContainer dc = new DataContainer();
+    		dc.boxid = msg.boxid; 
+    		dc.color = LEDColor.getLEDColor(msg.color).toString();
+    		result.add(dc);
+    	}
+    	model.addAttribute("searchInfo", result);
+    	
+    	return "searchDetailPopover :: resultList";
+    }
+
 }

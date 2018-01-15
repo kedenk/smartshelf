@@ -7,6 +7,8 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.smartshelf.util.QRCodeManager;
+
 @Configuration
 @EnableTransactionManagement
 @ComponentScan

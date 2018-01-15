@@ -88,11 +88,16 @@ public class MqttClientImpl implements MqttService {
 			return; 
 		}
 		
+		if( this.client == null || !this.client.isConnected() ) {
+			log.error("Mqtt Client is not connected to server."); 
+			return; 
+		}
+		
 		String strPayload = "";
 		try {
 			strPayload = new String(payload, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			log.error(e1.getMessage());
 		}
 		
 		log.info(String.format("Publish MqttMessage to topic '%s'. Message: %s", topic, strPayload));

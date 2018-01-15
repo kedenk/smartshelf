@@ -5,6 +5,12 @@
 <body layout:fragment="content">
 
 <div class="row" th:fragment="content">
+<div th:if="${searchParam}" class="pull-right">
+	<a class="btn btn-primary btn-large"
+	style="margin-top: 10px"
+	th:href="@{http://{_serverurl}:{_port}/(_serverurl=${serverurl}, _port=${serverport}, searchParam=${searchParam})}">
+	Back to Search</a>
+</div>
 <h2>Information</h2>
 
 <div class="form-group row">
