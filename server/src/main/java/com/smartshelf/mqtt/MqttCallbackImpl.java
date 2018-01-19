@@ -17,7 +17,7 @@ public class MqttCallbackImpl implements MqttCallback {
 	private ApplicationContext context; 
 	
 	@Autowired
-	private MqttMessageHandler mqttMessageHandler = new MessageHandler(); 
+	private MqttMessageHandler mqttMessageHandler;
 	
 	@Override
 	public void connectionLost(Throwable arg0) {

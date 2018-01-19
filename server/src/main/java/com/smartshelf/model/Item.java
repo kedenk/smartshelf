@@ -41,6 +41,9 @@ public class Item implements Serializable {
 	
 	@OneToMany
 	public List<ItemDatasheet> datasheet;
+	
+	@Column
+	public float weight; 
 
 	public long getId() {
 		return id;
@@ -84,5 +87,21 @@ public class Item implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Box getBox() {
+		return box;
+	}
+
+	public void setBox(Box box) {
+		this.box = box;
+	}
+
+	public float getWeight() {
+		return weight;
+	}
+
+	public void setWeight(float weight) {
+		this.weight = weight;
 	}
 }
