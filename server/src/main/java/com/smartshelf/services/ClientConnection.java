@@ -1,7 +1,12 @@
 package com.smartshelf.services;
 
+import static org.mockito.Matchers.matches;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +37,9 @@ public class ClientConnection {
 	private final int corePoolSize = 2;
 	
 	private static List<BlinkCommandMsg> currentSignals = new ArrayList<BlinkCommandMsg>();
+	private static List<BlinkCommandMsg> selectedSignals = new ArrayList<BlinkCommandMsg>();
+	
+	private static List<LEDColor> availableColors = Arrays.asList(LEDColor.getLEDColors());
 
 	/***
 	 * Send a LED blink command to the specified topic
@@ -61,11 +69,17 @@ public class ClientConnection {
 		return false; 
 	}
 	
+	/***
+	 * Turns of all LEDs except of the selected ones.
+	 * @param boxid
+	 * @return
+	 */
 	public Boolean selectOneSignal(long boxid) {
 		
 		for(BlinkCommandMsg entry : currentSignals) {
 			
 			if( entry.boxid == boxid ) {
+				selectedSignals.add(entry);
 				continue;
 			}
 			this.stopBlinkCommand(Long.valueOf(entry.boxid), LEDColor.getLEDColor(entry.color).toString());
@@ -152,6 +166,7 @@ public class ClientConnection {
 		if( isBlinkSignal(msg) ) {
 			
 			currentSignals.remove(msg);
+			selectedSignals.remove(msg);
 		}
 	}
 	
@@ -170,7 +185,33 @@ public class ClientConnection {
 		return currentSignals;
 	}
 	
-	public static LEDColor getFreeColor() {
-		return LEDColor.BLUE; // TODO IMPLEMENT
+	public static List<BlinkCommandMsg> getSelectedSignals() {
+		return selectedSignals;
+	}
+	
+	public static Map<Long, Integer> getSelectedSignalsAsMap() {
+		Map<Long, Integer> result = new HashMap<Long, Integer>();
+		for( BlinkCommandMsg msg : selectedSignals ) {
+			result.put(msg.boxid, msg.color);
+		}
+		
+		return result;
+	}
+	
+	/***
+	 * Returns a available color to select. If no free colors are available a Exception is thrown
+	 * @return
+	 * @throws Exception
+	 */
+	public static LEDColor getFreeColor() throws Exception {
+		
+		for( LEDColor color : availableColors ) {
+			if( currentSignals.stream().anyMatch(m -> m.color == color.getValue()) ) {
+				continue; 
+			}
+			return color; 
+		}
+		
+		throw new Exception("No available colors. Please wait until a color is free");
 	}
 }

@@ -184,7 +184,7 @@
  				});
  		}
  		
- 		function selectBox( boxid ) {
+ 		function selectBox( boxid, tdid ) {
  			
  			var server = [[${serverurl}]];
 			var port = [[${serverport}]];
@@ -192,6 +192,7 @@
 			  
  			$.post( url, function( data ) {
  				  console.log("Box selected");
+ 				  $('#' + tdid).parent().addClass('success');
  				});
  		}
  		
@@ -201,6 +202,36 @@
 			var param = /*[[@{?searchParam=}]]*/ "";
 			param += /*[[${searchParam}]]*/ "";
  			window.location.href = url + "/" + boxid + param;
+ 		}
+ 		
+ 		function orderSupplies( _boxid ) {
+ 			
+ 			var _url = "http://" + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + "/order/box/empty";
+			
+			 $.ajax({
+			        type: "POST",
+			        url: _url,
+			        cache: false,
+			        data: { 'boxid': _boxid },
+			        timeout: 600000,
+			        success: function (data) {
+
+			        	if( data.success ) {
+			        		// order will be processed
+			        		console.log("'mark as empty' received. Will be processed.");
+			        		alert("Ordered supplies.");
+			        	} else {
+			        		alert("Error occured: " + data.message);
+			        		console.error(data.message);
+			        	}
+
+			        },
+			        error: function (e) {
+
+			            console.log("ERROR : ", e);
+			            alert("Request failed. See console...\n");
+			        }
+			    });
  		}
 	
 	 </script>
@@ -218,13 +249,11 @@
 </noscript>
 
 <div class="master col-md-12" th:if="${masterview} != null">
-	<!-- <div th:replace="searchTemplate :: content"></div> -->
 	<div th:replace="${masterview} :: content"></div>
 </div>
 
 <div class="container">
 	<div class="row detail col-md-12" th:if="${detailview} != null">
-	    <!-- <div class="row col-md-12 detail" th:include="detailResultTemplate :: searchResult"> -->
 	    <div class="row col-md-12 detail" th:include="${detailview} :: content">
 	   	</div>
    	</div>

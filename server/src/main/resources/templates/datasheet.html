@@ -5,9 +5,13 @@
 <body layout:fragment="content">
 
 <div class="row" th:fragment="content">
-<div th:if="${searchParam}" class="pull-right">
+<div th:if="${searchParam}" class="pull-right" style="margin-top: 10px">
+	<button type="button"
+	class="btn btn-danger btn-large"
+	th:onclick="|orderSupplies( ${boxid} )|">
+	Mark as empty
+	</button>
 	<a class="btn btn-primary btn-large"
-	style="margin-top: 10px"
 	th:href="@{http://{_serverurl}:{_port}/(_serverurl=${serverurl}, _port=${serverport}, searchParam=${searchParam})}">
 	Back to Search</a>
 </div>

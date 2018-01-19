@@ -13,4 +13,20 @@ public class BlinkCommandMsg {
 		this.boxid = boxid; 
 		this.color = color; 
 	}
+
+	public long getBoxid() {
+		return boxid;
+	}
+
+	public void setBoxid(long boxid) {
+		this.boxid = boxid;
+	}
+
+	public int getColor() {
+		return color;
+	}
+
+	public void setColor(int color) {
+		this.color = color;
+	}
 }

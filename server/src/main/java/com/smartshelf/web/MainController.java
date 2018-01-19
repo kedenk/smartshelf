@@ -4,6 +4,7 @@ package com.smartshelf.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,9 +51,15 @@ public class MainController extends AbstractController {
     		model.addAttribute("searchResult", result); 
     		
     		model.addAttribute("currentSignals", clientConnection);
+    		// all selected boxes
+    		model.addAttribute("currentColors", ClientConnection.getSelectedSignalsAsMap());
     		
     		if( sendBlinkSignal ) {
-    			this.startSignal(result);
+    			try {
+    				this.startSignal(result);
+    			} catch(Exception e) {
+    				model.addAttribute("errormsg", "Currently all available colors are selected. Please try again later.");
+    			}
     		}
     	}
     	
@@ -86,7 +93,7 @@ public class MainController extends AbstractController {
     	throw new Exception("No search parameter was defined.");
     }
     
-    private void startSignal(List<Item> list) {
+    private void startSignal(List<Item> list) throws Exception {
     	
     	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class);
 		if( con != null ) {

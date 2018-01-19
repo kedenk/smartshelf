@@ -27,6 +27,10 @@ public enum LEDColor {
     	return values[i];
     }
     
+    public static LEDColor[] getLEDColors() {
+    	return values; 
+    }
+    
     public static LEDColor getLEDColor(String color) {
     	
     	LEDColor c = null; 
@@ -40,6 +44,7 @@ public enum LEDColor {
 			break; 
 		case "red": 
 			c = LEDColor.RED; 
+			break;
 		default: 
 			throw new ConvertException("Not supported color given.");
 		}

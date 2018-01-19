@@ -1,12 +1,19 @@
 package com.smartshelf.mail;
 
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 
+import com.smartshelf.dao.OrderOperatorDao;
 import com.smartshelf.model.Box;
+import com.smartshelf.model.OrderOperator;
 
 public class SimpleOrderManager implements OrderManager {
 
@@ -14,6 +21,14 @@ public class SimpleOrderManager implements OrderManager {
 	
 	private MailSender mailSender; 
 	private SimpleMailMessage templateMessage; 
+	
+	@Autowired
+	private OrderOperatorDao orderOperatorDao;
+	
+	@PostConstruct
+	private void init() {
+		this.orderOperatorDao.setEntityClass(OrderOperator.class);
+	}
 	
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
@@ -23,6 +38,7 @@ public class SimpleOrderManager implements OrderManager {
         this.templateMessage = templateMessage;
     }
     
+    @Override
     public Thread sendMailAsync(String to, Box box) {
     	
     	Thread sender = new Thread(new Runnable() {
@@ -66,5 +82,21 @@ public class SimpleOrderManager implements OrderManager {
         catch(MailException ex) {
             log.error(ex.getMessage());          
         }
+	}
+	
+	@Override 
+	public void orderSupplies(Box box) {
+		
+		List<OrderOperator> oo = this.orderOperatorDao.findAll();
+		
+		if( oo != null ) {
+			for(OrderOperator entry : oo) {
+				try {
+					this.sendMail(entry.getOperator().getMail(), box);
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+			}
+		}
 	}
 }

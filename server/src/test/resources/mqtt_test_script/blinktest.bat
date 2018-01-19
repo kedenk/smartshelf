@@ -1,4 +1,5 @@
 @echo off
+setlocal EnableDelayedExpansion
 :: Script for drawer led testing
 :: Test will not terminate
 
@@ -17,23 +18,35 @@
 @SET CLIENT_ID="downshutter"
 @SET MOSQ_BASE_DIR="C:\Program Files (x86)\mosquitto"
 
-@SET DRAWER_COUNT=10
+@SET DRAWER_COUNT=2
 @SET LED_COUNT=2
 
+@SET SLEEP_TIME=2000
+
 :: This test will run forever
+@SET /a lastbox=-1
 :loop
 for /l %%x in (0, 1, %DRAWER_COUNT%) do (
    
    @echo Testing drawer %%x
    for /l %%c in (0, 1, %LED_COUNT%) do (
-		if %%x GTR 0 (
-		%MOSQ_BASE_DIR%"\mosquitto_pub.exe" -h %BROKER_IP% -p %BROKER_PORT% -i %CLIENT_ID% -t %OFF_TOPIC% -m "{ 'boxid' : %%x, 'color' : %%c }"
+		if %%x NEQ %lastbox% (
+			echo Turnoff !lastbox!
+			%MOSQ_BASE_DIR%"\mosquitto_pub.exe" -h %BROKER_IP% -p %BROKER_PORT% -i %CLIENT_ID% -t %OFF_TOPIC% -m "{ 'boxid' : !lastbox!, 'color' : %%c }"
 		)
 		%MOSQ_BASE_DIR%"\mosquitto_pub.exe" -h %BROKER_IP% -p %BROKER_PORT% -i %CLIENT_ID% -t %ON_TOPIC% -m "{ 'boxid' : %%x, 'color' : %%c }"
 	)
 	
+	@SET /a lastbox=%%x
 	:: sleep
-	@SLEEP 1
+	ping -n 2 -w %SLEEP_TIME% 127.0.0.1 > nul
+)
+
+for /l %%x in (0, 1, %DRAWER_COUNT%) do (
+   
+   for /l %%c in (0, 1, %LED_COUNT%) do (
+		%MOSQ_BASE_DIR%"\mosquitto_pub.exe" -h %BROKER_IP% -p %BROKER_PORT% -i %CLIENT_ID% -t %OFF_TOPIC% -m "{ 'boxid' : %%x, 'color' : %%c }"
+	)
 )
 
 goto loop

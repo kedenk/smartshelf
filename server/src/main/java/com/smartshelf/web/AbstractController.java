@@ -1,5 +1,6 @@
 package com.smartshelf.web;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.smartshelf.dao.BoxDao;
 import com.smartshelf.dao.ItemDao;
+import com.smartshelf.model.Box;
+import com.smartshelf.model.Item;
 import com.smartshelf.services.ClientConnection;
 
 public class AbstractController {
@@ -30,6 +33,13 @@ public class AbstractController {
 	
 	@Autowired
 	protected HttpServletRequest request;
+	
+	
+	@PostConstruct
+	public void init() {
+		this.itemDao.setEntityClass(Item.class);
+		this.boxDao.setEntityClass(Box.class);
+	}
 	
 	protected Model setDetail(Model model, String detail) {
     	model.addAttribute("detailview", detail);
