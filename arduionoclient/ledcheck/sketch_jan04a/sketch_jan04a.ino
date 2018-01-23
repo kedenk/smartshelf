@@ -1,6 +1,6 @@
-int red = 7;
-int blue = 8;
-int yellow = 9;
+int red = 34;
+int blue = 35;
+int yellow = 36;
 
 void setup() {
   // put your setup code here, to run once:
@@ -12,11 +12,15 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  
   digitalWrite(red,HIGH);
   digitalWrite(blue,HIGH);
   digitalWrite(yellow,HIGH);
-  //delay(1000);  
+  delay(10); 
   digitalWrite(red,LOW);
   digitalWrite(blue,LOW);
   digitalWrite(yellow,LOW);
+  delay(10);
+   
+ 
 }

@@ -20,7 +20,7 @@ HX711 scale_d2(DOUT_D2, CLK);
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress ip(172, 16, 0, 100);
 IPAddress server(172, 16, 0, 101);
-char rootTopic[] = "devices/weight/{%d}";
+char rootTopic[] = "devices/weight/%d";
 char outTopic[20];
 float sensorData[] = {0.0,0.0,0.0,0.0};
 
@@ -118,13 +118,13 @@ void drawerOff(int boxNumber, int color){
       ledOff(color, 22);// 0th box start at pin 22
       break;
     case 1 :
-     Serial.println("boxTwo Glowerd");
-     ledOff(color, 25);// 1th box start at 25;
-     break;
+      Serial.println("boxTwo Glowerd");
+      ledOff(color, 25);// 1th box start at 25;
+      break;
     case 2:
-     Serial.println("boxThree Glowerd");
-     ledOff(color, 28);// 2nd box start at 28
-     break;
+      Serial.println("boxThree Glowerd");
+      ledOff(color, 28);// 2nd box start at 28
+      break;
     case 3:
       Serial.println("boxFour Glowerd");
       ledOff(color, 31);//3rd box start at 31
@@ -150,13 +150,13 @@ void drawerOn(int boxNumber, int color){
       ledOn(color, 22);// 0th box start at pin 7
       break;
     case 1 :
-     Serial.println("box 1 Glowerd");
-     ledOn(color, 25);// 1th box start at 10;
-     break;
+      Serial.println("box 1 Glowerd");
+      ledOn(color, 25);// 1th box start at 10;
+      break;
     case 2:
-     Serial.println("box 2 Glowerd");
-     ledOn(color, 28);// 2nd box start at 13
-     break;
+      Serial.println("box 2 Glowerd");
+      ledOn(color, 28);// 2nd box start at 13
+      break;
     case 3:
       Serial.println("box 3 Glowerd");
       ledOn(color, 31);//3rd box start at 16
