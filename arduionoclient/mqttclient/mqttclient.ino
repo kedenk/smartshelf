@@ -6,7 +6,7 @@
 #include "HX711.h"
 
 //reding sensors:initializing pins
-#define calibration_factor_s1 -180 //This value is obtained using the SparkFun_HX711_Calibration sketch
+#define calibration_factor_s1 180//This value is obtained using the SparkFun_HX711_Calibration sketch
 #define calibration_factor_s2 -180 //
 #define DOUT_D1  3
 #define DOUT_D2  4
