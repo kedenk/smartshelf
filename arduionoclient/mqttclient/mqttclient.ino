@@ -55,7 +55,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 
 void ledSetUp(){
-  for(int i = 22; i <= 34; i++){
+  for(int i = 22; i <= 39; i++){
     pinMode(i, OUTPUT);
   }
 }
