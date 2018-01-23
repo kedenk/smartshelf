@@ -6,18 +6,15 @@
 #include "HX711.h"
 
 //reding sensors:initializing pins
-#define calibration_factor -180 //This value is obtained using the SparkFun_HX711_Calibration sketch
-
+#define calibration_factor_s1 -180 //This value is obtained using the SparkFun_HX711_Calibration sketch
+#define calibration_factor_s2 -180 //
 #define DOUT_D1  3
 #define DOUT_D2  4
-#define DOUT_D3  5
-#define DOUT_D4  6
 #define CLK  2
 
 HX711 scale_d1(DOUT_D1, CLK);
 HX711 scale_d2(DOUT_D2, CLK);
-HX711 scale_d3(DOUT_D3, CLK);
-HX711 scale_d4(DOUT_D4, CLK);
+
 
 // Update these with values suitable for your network.
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
@@ -34,10 +31,6 @@ const unsigned long SEND_WEIGHT_DELAY = 5000;
 unsigned long onTime = 0; 
 
 
-int ledOut[] = {7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
-//Drawer1 7-9,Drawer2 10-12,Drawer3 13,15, Drawer4 16-18 
-
-
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -47,7 +40,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
       int *ledVal;
       ledVal =  readJeson(payload);
       drawerOn(ledVal[0],ledVal[1]);
-     
   }
   
   if( strcmp(topic,"devices/blink/stop") == 0) {
@@ -58,8 +50,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
       Serial.println(ledVal[0]);
       Serial.println(ledVal[1]);
       drawerOff(ledVal[0],ledVal[1]);
-    
-  }
+   }
 }
 
 
@@ -124,19 +115,27 @@ void drawerOff(int boxNumber, int color){
   switch(boxNumber){
     case 0:
       Serial.println("boxOne Glowerd");
-      ledOff(color, 22);// 0th box start at pin 7
+      ledOff(color, 22);// 0th box start at pin 22
       break;
     case 1 :
      Serial.println("boxTwo Glowerd");
-     ledOff(color, 25);// 1th box start at 10;
+     ledOff(color, 25);// 1th box start at 25;
      break;
     case 2:
      Serial.println("boxThree Glowerd");
-     ledOff(color, 28);// 2nd box start at 13
+     ledOff(color, 28);// 2nd box start at 28
      break;
     case 3:
       Serial.println("boxFour Glowerd");
-      ledOff(color, 31);//3rd box start at 16
+      ledOff(color, 31);//3rd box start at 31
+      break;
+    case 4:
+      Serial.println("boxFive Glowerd");
+      ledOff(color, 34);//3rd box start at 31
+      break;
+    case 5:
+      Serial.println("boxSix Glowerd");
+      ledOff(color, 37);//3rd box start at 31
       break;
     default:
      Serial.print("No box found");
@@ -161,6 +160,14 @@ void drawerOn(int boxNumber, int color){
     case 3:
       Serial.println("box 3 Glowerd");
       ledOn(color, 31);//3rd box start at 16
+      break;
+    case 4:
+      Serial.println("boxFive Glowerd");
+      ledOn(color, 34);//3rd box start at 31
+      break;
+    case 5:
+      Serial.println("boxSix Glowerd");
+      ledOn(color, 37);//3rd box start at 31
       break;
     default:
      Serial.print("No box found");
@@ -197,16 +204,13 @@ void subscribe() {
 void readSensors(){
   sensorData[0] = scale_d1.get_units();
   sensorData[1] = scale_d2.get_units();
-  sensorData[2] = scale_d3.get_units();
-  sensorData[3] = scale_d4.get_units();
-  
 }
 
    
 void sendWeights() {
   readSensors();
       // Once connected, publish an announcement...
-      for (int i = 0;i<=3;i++){
+      for (int i = 0;i<=1;i++){
         sprintf(outTopic,rootTopic,i);
         float tempval = sensorData[i] ;
         String sf (tempval, 2);
@@ -245,15 +249,11 @@ void reconnect() {
 
 void setup()
 {
-  scale_d1.set_scale(calibration_factor); //This value is obtained by using the SparkFun_HX711_Calibration sketch
+  scale_d1.set_scale(calibration_factor_s1); //This value is obtained by using the SparkFun_HX711_Calibration sketch
   scale_d1.tare(); //Assuming there is no weight on the scale at start up, reset the scale to 0
-  scale_d2.set_scale(calibration_factor); //This value is obtained by using the SparkFun_HX711_Calibration sketch
+  scale_d2.set_scale(calibration_factor_s2); //This value is obtained by using the SparkFun_HX711_Calibration sketch
   scale_d2.tare();
-  scale_d3.set_scale(calibration_factor); //This value is obtained by using the SparkFun_HX711_Calibration sketch
-  scale_d3.tare();
-  scale_d4.set_scale(calibration_factor); //This value is obtained by using the SparkFun_HX711_Calibration sketch
-  scale_d4.tare();
-  // Set up jeson buffer 
+ 
   ledSetUp();
   Serial.begin(57600);
   client.setServer(server, 1883);
