@@ -79,7 +79,8 @@ public class MessageHandler implements MqttMessageHandler {
 		try {
 			if( str_boxId != null ) {
 				boxId = Long.parseLong(str_boxId); 
-				Box box = this.boxDao.findById(boxId);
+				boxDao.setEntityClass(Box.class);
+				Box box = this.boxDao.findByBoxId(boxId);
 				String payload = this.convertPayload(message.getPayload()); 
 				float fPayload = Float.parseFloat(payload);
 				

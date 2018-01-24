@@ -52,7 +52,18 @@ public class ClientConnection {
 		return this.startBlinkCommand(msg);
 	}
 	
+	public Boolean startBlinkCommand(long boxid, String color, Boolean enableStopTimer) {
+
+		BlinkCommandMsg msg = createBlinkCommandMsg(boxid, color); 
+		return this.startBlinkCommand(msg, enableStopTimer);
+	}
+	
 	public Boolean startBlinkCommand(BlinkCommandMsg msg) {
+		
+		return startBlinkCommand(msg, true); 
+	}
+	
+	public Boolean startBlinkCommand(BlinkCommandMsg msg, Boolean enableStopTimer) {
 		
 		String jsonMsg = this.buildBlinkCommandMsg(msg);
 		if( jsonMsg != null ) {
@@ -66,7 +77,9 @@ public class ClientConnection {
 			}
 			
 			// setup blink stop timer
-			this.setBlinkStopTimer(msg);
+			if( enableStopTimer ) {
+				this.setBlinkStopTimer(msg);
+			}
 			return true;
 		}
 		
@@ -101,21 +114,28 @@ public class ClientConnection {
 	}
 	
 	public void stopBlinkCommand(BlinkCommandMsg msg) {
+		this.stopBlinkCommand(msg, true);
+	}
+	
+	public void stopBlinkCommand(BlinkCommandMsg msg, Boolean clearSignalList) {
 		
 		String jsonMsg = this.buildBlinkCommandMsg(msg);
 		if( jsonMsg != null ) {
 			log.info(String.format("Send blink stop command for box %s. Message: %s", msg.boxid, jsonMsg));
 			this.mqttService.publish(BLINK_COMMAND_STOP_TOPIC, jsonMsg.getBytes());
 			
-			removeBlinkSignal(msg);
+			if( clearSignalList ) {
+				removeBlinkSignal(msg);
+			}
 		}
 	}
 	
 	public void stopAllBlinkCommands() {
 		
 		for(BlinkCommandMsg bcm : currentSignals) {
-			this.stopBlinkCommand(bcm);
+			this.stopBlinkCommand(bcm, false);
 		}
+		currentSignals.clear();
 		selectedSignals.clear();
 		
 		for(Long boxid : asEmptyMarked) {

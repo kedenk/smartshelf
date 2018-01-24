@@ -59,8 +59,9 @@ public class PersistenceTest {
 	public Box createRandomBoxObj() {
 		
 		Box b = new Box(); 
-		b.amount = new Random().nextInt(100);; 
+		b.amount = new Random().nextInt(100) + 1;
 		b.item = this.createRandomItemObj(); 
+		b.setBoxid(new Random().nextInt(100) + 1);
 		return b; 
 	}
 	
@@ -111,5 +112,9 @@ public class PersistenceTest {
 		
 		Assert.assertEquals(ammountToSet, saved.amount);
 		Assert.assertEquals(ammountToSet, b.amount);
+		
+		b = boxDao.findByBoxId(created.boxid); 
+		Assert.assertNotNull(b);
+		Assert.assertEquals(created.id, b.id);
 	}
 }

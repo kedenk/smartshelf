@@ -2,8 +2,7 @@ package com.smartshelf.dao;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
@@ -15,18 +14,28 @@ import com.smartshelf.model.Box;
 @Repository
 @Transactional
 public class BoxDao extends AbstractGenericDao<Box> {
-
-	@PersistenceContext
-	private EntityManager em; 
 	
    public void add(Box box) {
-      em.persist(box);
+	   entityManager.persist(box);
    }
 
    public List<Box> listPersons() {
-      CriteriaQuery<Box> criteriaQuery = em.getCriteriaBuilder().createQuery(Box.class);
+      CriteriaQuery<Box> criteriaQuery = entityManager.getCriteriaBuilder().createQuery(Box.class);
       @SuppressWarnings("unused")
       Root<Box> root = criteriaQuery.from(Box.class);
-      return em.createQuery(criteriaQuery).getResultList();
+      return entityManager.createQuery(criteriaQuery).getResultList();
+   }
+   
+   /***
+    * Finds the box by its box id (not primary key)
+    * @param boxid
+    * @return
+    */
+   public Box findByBoxId(long boxid) {
+	   
+	   TypedQuery<Box> query = entityManager.createQuery("SELECT e FROM Box e WHERE e.boxid = :boxid", Box.class);
+	   query.setParameter("boxid", boxid);
+	   
+	   return query.getSingleResult();
    }
 }

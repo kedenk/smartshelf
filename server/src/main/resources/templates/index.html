@@ -233,6 +233,32 @@
 			        }
 			    });
  		}
+ 		
+ 		function startServiceMode() {
+ 			var url='http://' + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + '/servicemode/start';
+ 			
+ 			$.post(url)
+				.done(function( data ) {
+				  console.log("post request done"); 
+				  window.location.reload(true);
+				})
+				.fail(function( error ) {
+					alert(error);
+				});
+ 		}
+ 		
+ 		function stopServiceMode() {
+ 			var url='http://' + [[${serverurl}]] + ':' + [[${@environment.getProperty('server.port')}]] + '/servicemode/stop';
+ 			
+ 			$.post(url)
+			.done(function( data ) {
+			  console.log("post request done"); 
+			  window.location.reload(true);
+			})
+			.fail(function( error ) {
+				alert(error);
+			});
+ 		}
 	
 	 </script>
 </head>

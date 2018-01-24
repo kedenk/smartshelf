@@ -2,6 +2,7 @@ package com.smartshelf.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +24,10 @@ public class Box implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public long id; 
 	
-	@OneToOne
+	@Column(unique=true)
+	public long boxid;
+	
+	@OneToOne(cascade=CascadeType.ALL)
 	public Item item; 
 	
 	@Column
@@ -50,6 +54,22 @@ public class Box implements Serializable {
 	}
 
 	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
+	public long getBoxid() {
+		return boxid;
+	}
+
+	public void setBoxid(long boxid) {
+		this.boxid = boxid;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public void setAmount(Integer amount) {
 		this.amount = amount;
 	} 
 }
