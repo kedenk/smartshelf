@@ -43,7 +43,7 @@ public class Item implements Serializable {
 	public List<ItemDatasheet> datasheet;
 	
 	@Column
-	public float weight; 
+	public Float weight; 
 
 	public long getId() {
 		return id;

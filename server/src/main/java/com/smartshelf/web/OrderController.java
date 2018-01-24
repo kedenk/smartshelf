@@ -53,6 +53,7 @@ public class OrderController extends AbstractController {
     	if( con != null ) {
     		String color = LEDColor.RED.toString();
     		con.startBlinkCommand(_boxid, color);
+    		con.addEmptyMarkedBox(_boxid);
     	}
     	
     	return resp;
@@ -68,6 +69,7 @@ public class OrderController extends AbstractController {
     	if( con != null ) {
     		String color = LEDColor.RED.getStr();
     		con.stopBlinkCommand(Long.valueOf(boxid), color);
+    		con.removeEmptyMarkedBox(Long.valueOf(boxid));
     	}
     	
     	return new OrderResponse();

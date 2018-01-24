@@ -18,7 +18,7 @@ setlocal EnableDelayedExpansion
 @SET CLIENT_ID="downshutter"
 @SET MOSQ_BASE_DIR="C:\Program Files (x86)\mosquitto"
 
-@SET DRAWER_COUNT=2
+@SET DRAWER_COUNT=5
 @SET LED_COUNT=2
 
 @SET SLEEP_TIME=2000

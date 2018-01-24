@@ -1,7 +1,5 @@
 package com.smartshelf.services;
 
-import static org.mockito.Matchers.matches;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,6 +38,8 @@ public class ClientConnection {
 	private static List<BlinkCommandMsg> selectedSignals = new ArrayList<BlinkCommandMsg>();
 	
 	private static List<LEDColor> availableColors = Arrays.asList(LEDColor.getLEDColors());
+	
+	private static List<Long> asEmptyMarked = new ArrayList<Long>();
 
 	/***
 	 * Send a LED blink command to the specified topic
@@ -49,10 +49,14 @@ public class ClientConnection {
 	public Boolean startBlinkCommand(long boxid, String color) {
 
 		BlinkCommandMsg msg = createBlinkCommandMsg(boxid, color); 
+		return this.startBlinkCommand(msg);
+	}
+	
+	public Boolean startBlinkCommand(BlinkCommandMsg msg) {
 		
 		String jsonMsg = this.buildBlinkCommandMsg(msg);
 		if( jsonMsg != null ) {
-			log.info(String.format("Send blink start command for box %s. Message: %s", boxid, jsonMsg));
+			log.info(String.format("Send blink start command for box %s. Message: %s", msg.boxid, jsonMsg));
 			this.mqttService.publish(BLINK_COMMAND_START_TOPIC, jsonMsg.getBytes());
 			
 			try {
@@ -104,6 +108,28 @@ public class ClientConnection {
 			this.mqttService.publish(BLINK_COMMAND_STOP_TOPIC, jsonMsg.getBytes());
 			
 			removeBlinkSignal(msg);
+		}
+	}
+	
+	public void stopAllBlinkCommands() {
+		
+		for(BlinkCommandMsg bcm : currentSignals) {
+			this.stopBlinkCommand(bcm);
+		}
+		selectedSignals.clear();
+		
+		for(Long boxid : asEmptyMarked) {
+			this.stopBlinkCommand(new BlinkCommandMsg(boxid, LEDColor.RED.getValue()));
+		}
+	}
+	
+	/***
+	 * All boxes marked as empty (contained in the list asEmptyMarked) switching the visual feedback on
+	 */
+	public void startEmptyBoxSignals() {
+	
+		for(Long boxid : asEmptyMarked) {
+			this.startBlinkCommand(new BlinkCommandMsg(boxid, LEDColor.RED.getValue()));
 		}
 	}
 	
@@ -198,6 +224,16 @@ public class ClientConnection {
 		return result;
 	}
 	
+	public static void addEmptyMarkedBox(long boxid) {
+		asEmptyMarked.add(boxid);
+	}
+	
+	public static void removeEmptyMarkedBox(long boxid) {
+		if( asEmptyMarked.contains(boxid) ) {
+			asEmptyMarked.remove(boxid);
+		}
+	}
+	
 	/***
 	 * Returns a available color to select. If no free colors are available a Exception is thrown
 	 * @return
@@ -206,7 +242,7 @@ public class ClientConnection {
 	public static LEDColor getFreeColor() throws Exception {
 		
 		for( LEDColor color : availableColors ) {
-			if( currentSignals.stream().anyMatch(m -> m.color == color.getValue()) ) {
+			if( currentSignals.stream().anyMatch(m -> m.color == color.getValue()) || color == LEDColor.RED ) {
 				continue; 
 			}
 			return color; 

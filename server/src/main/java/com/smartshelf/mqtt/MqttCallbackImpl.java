@@ -17,7 +17,7 @@ public class MqttCallbackImpl implements MqttCallback {
 	private ApplicationContext context; 
 	
 	@Autowired
-	private MqttMessageHandler mqttMessageHandler;
+	private MessageHandler messageHandler;
 	
 	@Override
 	public void connectionLost(Throwable arg0) {
@@ -42,9 +42,9 @@ public class MqttCallbackImpl implements MqttCallback {
 	@Override
 	public void messageArrived(String arg0, MqttMessage arg1) throws Exception {
 		
-		if( this.mqttMessageHandler != null ) {
+		if( this.messageHandler != null ) {
 		
-			this.mqttMessageHandler.handleMessage(arg0, arg1);
+			this.messageHandler.handleMessage(arg0, arg1);
 			
 		} else {
 			log.error("No MqttMessageHandler defined. Is null");

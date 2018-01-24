@@ -27,7 +27,7 @@ public class Box implements Serializable {
 	public Item item; 
 	
 	@Column
-	public int amount;
+	public Integer amount;
 
 	public long getId() {
 		return id;
