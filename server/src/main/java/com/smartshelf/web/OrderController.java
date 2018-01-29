@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.smartshelf.mail.OrderManager;
 import com.smartshelf.model.Box;
 import com.smartshelf.model.LEDColor;
+import com.smartshelf.services.BlinkCommandMsg;
 import com.smartshelf.services.ClientConnection;
 
 @Controller
@@ -51,8 +52,9 @@ public class OrderController extends AbstractController {
     	// mark box as empty with visual feedback
     	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class); 
     	if( con != null ) {
-    		String color = LEDColor.RED.toString();
-    		con.startBlinkCommand(_boxid, color);
+    		con.startBlinkCommand(new BlinkCommandMsg(_boxid, LEDColor.RED.getValue()), false);
+    		//String color = LEDColor.RED.toString();
+    		//con.startBlinkCommand(_boxid, color);
     		con.addEmptyMarkedBox(_boxid);
     	}
     	

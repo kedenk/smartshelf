@@ -2,6 +2,8 @@ package com.smartshelf.services;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -11,6 +13,8 @@ import com.smartshelf.model.LEDColor;
 
 public class ServiceModeService {
 
+	private final Logger log = LoggerFactory.getLogger(ServiceModeService.class);
+	
 	private static Boolean inServiceMode = false; 
 	
 	@Autowired
@@ -47,9 +51,10 @@ public class ServiceModeService {
 		// set status of drawers with visual feedback
 		List<Box> boxes = this.boxDao.findAll();
 		for( Box b : boxes ) {
-			
+			log.info("Current amount (" + b.boxid + "): " + b.amount);
 			if( b.amount <= 0 ) {
 				// red signal 
+				System.out.print("amount: " + b.amount + " - color : " + LEDColor.RED);
 				this.clientConnection.startBlinkCommand(new BlinkCommandMsg(b.boxid, LEDColor.RED.getValue()), false);
 			} else if ( b.amount > 0 && b.amount <= this.halfFullThreshold ) {
 				// yellow signal
@@ -58,6 +63,8 @@ public class ServiceModeService {
 				// blue signal
 				this.clientConnection.startBlinkCommand(new BlinkCommandMsg(b.boxid, LEDColor.BLUE.getValue()), false);
 			}
+			
+			Thread.sleep(500);
 		}
 		
 		inServiceMode = true; 

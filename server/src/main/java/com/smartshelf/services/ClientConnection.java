@@ -132,14 +132,20 @@ public class ClientConnection {
 	
 	public void stopAllBlinkCommands() {
 		
-		for(BlinkCommandMsg bcm : currentSignals) {
-			this.stopBlinkCommand(bcm, false);
-		}
-		currentSignals.clear();
-		selectedSignals.clear();
-		
-		for(Long boxid : asEmptyMarked) {
-			this.stopBlinkCommand(new BlinkCommandMsg(boxid, LEDColor.RED.getValue()));
+		try {
+			for(BlinkCommandMsg bcm : currentSignals) {
+				Thread.sleep(500);
+				this.stopBlinkCommand(bcm, false);
+			}
+			currentSignals.clear();
+			selectedSignals.clear();
+			
+			for(Long boxid : asEmptyMarked) {
+				Thread.sleep(500);
+				this.stopBlinkCommand(new BlinkCommandMsg(boxid, LEDColor.RED.getValue()));
+			}
+		} catch(Exception e) {
+			log.error(e.getMessage());
 		}
 	}
 	

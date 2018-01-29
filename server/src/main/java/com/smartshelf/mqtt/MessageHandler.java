@@ -86,7 +86,7 @@ public class MessageHandler implements MqttMessageHandler {
 				
 				addWeight(boxId, fPayload);
 				
-				int newAmount = (int)getNewAmount(boxId);
+				int newAmount = (int)getNewAmount(box);
 				box.setAmount(newAmount);
 				this.boxDao.save(box);
 				
@@ -96,12 +96,15 @@ public class MessageHandler implements MqttMessageHandler {
 					lastMailSent.put(box.id, new Date());
 				}
 			}
+		
 		} catch(NumberFormatException e) {
 			log.warn(String.format("Topic contains no parsable box id (%s).", topic));
 			return; 
 		} catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage());
 			return;
+		}catch(Exception e) {
+			log.warn(e.getMessage());
 		}
 	}
 	
@@ -161,14 +164,30 @@ public class MessageHandler implements MqttMessageHandler {
 	 * @param boxid
 	 * @return
 	 */
-	private int getNewAmount(long boxid) {
+	private int getNewAmount(Box box) {
 		
-		int length = lastFloats.get(boxid).size();
+		int length = lastFloats.get(box.boxid).size();
 		float tmpVal = 0.0f; 
-		for( Float value : lastFloats.get(boxid) ) {
+		for( Float value : lastFloats.get(box.boxid) ) {
 			tmpVal += value; 
 		}
-		return (int)tmpVal / length;
+		
+		float average = tmpVal / length; 
+		int result = (int)Math.round( (average / box.item.weight) );
+		
+		log.info("Length: " + length);
+		log.info("tmpval: " + average + " -- weight: " + box.item.weight);
+		
+		log.info("new amount " + result);
+		
+		if( average < box.item.weight )
+			return 0; 
+		
+		
+		if( result <= 0 )
+			return 0; 
+		else 
+			return result;
 	}
 
 	/**
