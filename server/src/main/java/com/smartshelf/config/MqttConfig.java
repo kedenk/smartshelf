@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.smartshelf.mqtt.MessageHandler;
+import com.smartshelf.mqtt.MqttCallbackImpl;
 import com.smartshelf.mqtt.MqttClientImpl;
 import com.smartshelf.mqtt.MqttMessageHandler;
 import com.smartshelf.mqtt.MqttService;
@@ -34,6 +35,16 @@ public class MqttConfig {
 	@Bean
 	public MqttMessageHandler mqttMessageHandler() {
 		return new MessageHandler(); 
+	}
+	
+	@Bean 
+	public MessageHandler messageHandler() {
+		return new MessageHandler();
+	}
+	
+	@Bean
+	public MqttCallbackImpl mqttCallbackImpl() {
+		return new MqttCallbackImpl(); 
 	}
 	
 	@Bean 

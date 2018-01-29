@@ -1,7 +1,11 @@
 package com.smartshelf.mqtt;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 
 import com.smartshelf.dao.BoxDao;
+import com.smartshelf.mail.OrderManager;
 import com.smartshelf.model.Box;
 
 public class MessageHandler implements MqttMessageHandler {
@@ -24,10 +29,20 @@ public class MessageHandler implements MqttMessageHandler {
 	@Autowired
 	private BoxDao boxDao; 
 	
+	@Autowired
+	private OrderManager orderManager;
+	
 	@Value("${weight.maxlength}")
 	private int MAX_LAST_FLOAT_SIZE;
+	@Value("${box.empty.infomail.enabled}")
+	private Boolean sendBoxEmptyMail;
+	@Value("${box.empty.infomail.interval}")
+	private int mailReminderInterval;
 	
 	private static Map<Long, ArrayList<Float>> lastFloats = new HashMap<Long, ArrayList<Float>>();
+	private static Map<Long, Date> lastMailSent = new HashMap<Long, Date>();
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
 	// after the last '/' will be the boxid
 	private final String BOX_WEIGHT = "devices/weight/"; 
@@ -64,15 +79,22 @@ public class MessageHandler implements MqttMessageHandler {
 		try {
 			if( str_boxId != null ) {
 				boxId = Long.parseLong(str_boxId); 
-				Box box = this.boxDao.findById(boxId);
-				float weight = box.item.getWeight(); 
+				boxDao.setEntityClass(Box.class);
+				Box box = this.boxDao.findByBoxId(boxId);
 				String payload = this.convertPayload(message.getPayload()); 
 				float fPayload = Float.parseFloat(payload);
 				
 				addWeight(boxId, fPayload);
 				
-				box.setAmount((int)getNewWeight(boxId));
+				int newAmount = (int)getNewAmount(boxId);
+				box.setAmount(newAmount);
 				this.boxDao.save(box);
+				
+				// send mail reminder
+				if( this.sendBoxEmptyMail && newAmount <= 0 && this.isMailInterval(box.id)) {
+					this.orderManager.orderSupplies(box);
+					lastMailSent.put(box.id, new Date());
+				}
 			}
 		} catch(NumberFormatException e) {
 			log.warn(String.format("Topic contains no parsable box id (%s).", topic));
@@ -83,6 +105,41 @@ public class MessageHandler implements MqttMessageHandler {
 		}
 	}
 	
+	/**
+	 * Check if the interval for sending a new mail reminder about a empty drawer is expired
+	 * @param boxid
+	 * @return
+	 */
+	private Boolean isMailInterval(long boxid) {
+		
+		Date d = lastMailSent.get(boxid);
+		
+		if( d == null ) {
+			return true; 
+		}
+		
+		try {
+			Calendar c = Calendar.getInstance(); 
+			c.setTime(sdf.parse(d.toString()));
+			c.add(Calendar.DATE, mailReminderInterval);
+			Date nextIntervall = c.getTime();
+			
+			if( d != null && d.after(nextIntervall) ) {
+				return true; 
+			}
+		
+		} catch (ParseException e) {
+			log.error(e.getMessage());
+		}
+		
+		return false;
+	}
+	
+	/***
+	 * Add new weight to the given box weight list
+	 * @param boxid
+	 * @param weight
+	 */
 	private void addWeight(long boxid, float weight) {
 		
 		if( !lastFloats.containsKey(boxid) ) {
@@ -99,16 +156,27 @@ public class MessageHandler implements MqttMessageHandler {
 		lastFloats.get(boxid).add(weight);
 	}
 	
-	private float getNewWeight(long boxid) {
+	/***
+	 * Get new calculated amount of box
+	 * @param boxid
+	 * @return
+	 */
+	private int getNewAmount(long boxid) {
 		
 		int length = lastFloats.get(boxid).size();
 		float tmpVal = 0.0f; 
 		for( Float value : lastFloats.get(boxid) ) {
 			tmpVal += value; 
 		}
-		return tmpVal / length;
+		return (int)tmpVal / length;
 	}
 
+	/**
+	 * Converts the byte[] payload to a string representation
+	 * @param payload
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	private String convertPayload(byte[] payload) throws UnsupportedEncodingException {
 		
 		return new String(payload, strEncoding); 

@@ -13,11 +13,18 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+
+import com.smartshelf.config.MqttConfig;
 
 public class MqttClientImpl implements MqttService {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	private ApplicationContext context;
 	
 	private MqttClient client; 
 	
@@ -25,6 +32,11 @@ public class MqttClientImpl implements MqttService {
 	private String clientId; 
 	@Value("${mqtt.client.brokerurl}")
 	private String brokerUrl; 
+	
+	private Boolean tryReconnect = true;
+	private static final long CONNECT_TIMEOUT = 10000;
+	
+	
 	
 	private List<String> topics; 
 	
@@ -45,7 +57,35 @@ public class MqttClientImpl implements MqttService {
 		log.info(String.format("Connecting MqttClient to Broker (%s). ClientId: %s", this.brokerUrl, this.clientId));
 		
 		this.client = new MqttClient(this.brokerUrl, this.clientId);
-		this.client.connect();
+		this.tryReconnect = true;
+		
+		while( !this.client.isConnected() && this.tryReconnect ) {
+    		
+        	try {
+        		this.client.connect();
+            	
+            	log.info("Mqtt client connected.");
+            	
+            	MqttCallbackImpl mqttCallback = (MqttCallbackImpl)context.getBean(MqttCallbackImpl.class);
+    			this.setMessageCallback(mqttCallback);
+
+    			List<String> topics = MqttConfig.getStdTopics();
+    			
+    			for( String topic : topics ) {
+    				client.subscribe(topic);
+    			}
+    			
+    		} catch (MqttException e) {
+    			log.error(e.getMessage());
+    			log.error("Next try to connect in " + CONNECT_TIMEOUT + "ms.");
+    			
+    			try {
+					Thread.sleep(CONNECT_TIMEOUT);
+				} catch (InterruptedException e1) {
+					log.error(e1.getMessage());
+				}
+    		}
+    	}
 	}
 
 	@Override
@@ -56,6 +96,7 @@ public class MqttClientImpl implements MqttService {
 			
 			this.client.disconnect();
 			this.client = null;
+			this.tryReconnect = false;
 			
 		} catch (MqttException e) {
 			log.error(e.getMessage());

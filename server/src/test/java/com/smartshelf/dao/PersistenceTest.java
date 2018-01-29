@@ -38,7 +38,10 @@ public class PersistenceTest {
 		itemDao.setEntityClass(Item.class);
 	}
 	
-	// creates a random item object
+	/***
+	 * Creates random item object
+	 * @return
+	 */
 	public Item createRandomItemObj() {
 		
 		Item i = new Item(); 
@@ -47,6 +50,19 @@ public class PersistenceTest {
 		i.name = "test name " + new Random().nextInt(893298172);
 		
 		return i; 
+	}
+	
+	/***
+	 * Creates random Box object
+	 * @return
+	 */
+	public Box createRandomBoxObj() {
+		
+		Box b = new Box(); 
+		b.amount = new Random().nextInt(100) + 1;
+		b.item = this.createRandomItemObj(); 
+		b.setBoxid(new Random().nextInt(100) + 1);
+		return b; 
 	}
 	
 	@Test
@@ -75,19 +91,30 @@ public class PersistenceTest {
 	@Rollback(true)
 	public void updateEntityTest() {
 		
-		int ammountToSet = 544864; 
+		Integer ammountToSet = 544864; 
 		
-		Box b = boxDao.findById(100); 
+		// first save a entity
+		Box box = createRandomBoxObj(); 
+		Box created = boxDao.save(box);
+		Assert.assertNotNull(created);
+		Assert.assertNotEquals(0, created.id);
+		
+		Box b = boxDao.findById(created.id); 
 		Assert.assertNotNull(b);
+		Assert.assertNotEquals(0, b.id);
 		
 		b.amount = ammountToSet; 
 		Box saved = boxDao.save(b);
 		Assert.assertNotNull(saved);
 		
-		b = boxDao.findById(100); 
+		b = boxDao.findById(created.id); 
 		Assert.assertNotNull(b);
 		
 		Assert.assertEquals(ammountToSet, saved.amount);
 		Assert.assertEquals(ammountToSet, b.amount);
+		
+		b = boxDao.findByBoxId(created.boxid); 
+		Assert.assertNotNull(b);
+		Assert.assertEquals(created.id, b.id);
 	}
 }
