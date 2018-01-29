@@ -211,7 +211,7 @@ void sendWeights() {
   readSensors();
       // Once connected, publish an announcement...
       for (int i = 0;i<=1;i++){
-        sprintf(outTopic,rootTopic,i);
+        sprintf(outTopic,rootTopic,i+4);//Sterting weight drawer from 4
         float tempval = sensorData[i] ;
         String sf (tempval, 2);
         const char* sensorVal;
