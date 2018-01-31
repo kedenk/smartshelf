@@ -250,6 +250,10 @@ public class ClientConnection {
 		return result;
 	}
 	
+	public static Boolean isEmptyMarkedBox(long boxid) {
+		return asEmptyMarked.contains(boxid);
+	}
+	
 	public static void addEmptyMarkedBox(long boxid) {
 		asEmptyMarked.add(boxid);
 	}

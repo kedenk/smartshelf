@@ -62,7 +62,7 @@ public class QRCodeService extends AbstractController {
     	
     	if( b != null ) {
     		setViews(model, null, "datasheet");
-    		model.addAttribute("boxid", b.id); 
+    		model.addAttribute("boxid", b.boxid); 
     		model.addAttribute("itemname", b.item.name);
     		model.addAttribute("datasheet", b.item.datasheet);
     	}

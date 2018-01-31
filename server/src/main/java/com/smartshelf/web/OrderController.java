@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smartshelf.mail.OrderManager;
 import com.smartshelf.model.Box;
+import com.smartshelf.model.ItemStatus;
 import com.smartshelf.model.LEDColor;
 import com.smartshelf.services.BlinkCommandMsg;
 import com.smartshelf.services.ClientConnection;
@@ -42,30 +43,38 @@ public class OrderController extends AbstractController {
     	OrderResponse resp = new OrderResponse(); 
     	
     	long _boxid = Long.valueOf(boxid);
-    	Box box = this.boxDao.findById(_boxid); 
+    	Box box = this.boxDao.findByBoxId(_boxid); 
     	if( box == null ) {
     		resp.setError("No box with given ID found.");
     	}
+    	
+    	// update box amount
+    	box.setAmount(0);
+    	box.item.setStatus(ItemStatus.OUT_OF_STOCK);
+    	box = this.boxDao.save(box);
     	
     	orderManager.orderSupplies(box);
     	
     	// mark box as empty with visual feedback
     	ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class); 
-    	if( con != null ) {
-    		con.startBlinkCommand(new BlinkCommandMsg(_boxid, LEDColor.RED.getValue()), false);
+    	if( con != null && !ClientConnection.isEmptyMarkedBox(box.boxid) ) {
+    		con.startBlinkCommand(new BlinkCommandMsg(box.boxid, LEDColor.RED.getValue()), false);
     		//String color = LEDColor.RED.toString();
     		//con.startBlinkCommand(_boxid, color);
-    		con.addEmptyMarkedBox(_boxid);
+    		ClientConnection.addEmptyMarkedBox(box.boxid);
     	}
     	
     	return resp;
     }
 	
 	@RequestMapping(value = "/order/box/notempty", method = RequestMethod.POST)
-	public @ResponseBody OrderResponse marBoxNotEmpty(@RequestParam("boxid") String boxid) {
+	public @ResponseBody OrderResponse marBoxNotEmpty(@RequestParam("boxid") String boxid, @RequestParam("newAmount") int newAmount) {
 		
-		// TODO add amount parameter do declaration
-		// TODO add given amount to amount in database
+		long _boxid = Long.valueOf(boxid);
+    	Box box = this.boxDao.findById(_boxid);
+    	box.setAmount(newAmount);
+    	box.item.setStatus(ItemStatus.AVAILABLE);
+    	box = this.boxDao.save(box);
 		
 		ClientConnection con = (ClientConnection)this.context.getBean(ClientConnection.class); 
     	if( con != null ) {

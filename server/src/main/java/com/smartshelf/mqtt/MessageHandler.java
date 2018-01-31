@@ -14,11 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 
 import com.smartshelf.dao.BoxDao;
 import com.smartshelf.mail.OrderManager;
 import com.smartshelf.model.Box;
+import com.smartshelf.model.LEDColor;
+import com.smartshelf.services.ClientConnection;
+import com.smartshelf.services.ServiceModeService;
+import com.smartshelf.web.OrderController;
 
 public class MessageHandler implements MqttMessageHandler {
 
@@ -31,6 +36,10 @@ public class MessageHandler implements MqttMessageHandler {
 	
 	@Autowired
 	private OrderManager orderManager;
+	@Autowired
+	private ClientConnection clientConnection;
+	@Autowired
+	private ApplicationContext context;
 	
 	@Value("${weight.maxlength}")
 	private int MAX_LAST_FLOAT_SIZE;
@@ -91,9 +100,16 @@ public class MessageHandler implements MqttMessageHandler {
 				this.boxDao.save(box);
 				
 				// send mail reminder
-				if( this.sendBoxEmptyMail && newAmount <= 0 && this.isMailInterval(box.id)) {
-					this.orderManager.orderSupplies(box);
-					lastMailSent.put(box.id, new Date());
+				if( this.sendBoxEmptyMail && newAmount <= 0 && this.isMailInterval(box.boxid)) {
+					OrderController oc = (OrderController)context.getBean(OrderController.class);
+					oc.markBoxEmpty(Long.toString(box.getBoxid()));
+					//this.orderManager.orderSupplies(box);
+					lastMailSent.put(box.boxid, new Date());
+				}
+				
+				if( newAmount > 0 && !ServiceModeService.isServiceMode()/*&& this.clientConnection.isBlinkSignal(box.getBoxid(), LEDColor.RED.getStr())*/) {
+					
+					this.clientConnection.stopBlinkCommand(box.getBoxid(), LEDColor.RED.toString());
 				}
 			}
 		
@@ -121,18 +137,13 @@ public class MessageHandler implements MqttMessageHandler {
 			return true; 
 		}
 		
-		try {
-			Calendar c = Calendar.getInstance(); 
-			c.setTime(sdf.parse(d.toString()));
-			c.add(Calendar.DATE, mailReminderInterval);
-			Date nextIntervall = c.getTime();
-			
-			if( d != null && d.after(nextIntervall) ) {
-				return true; 
-			}
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(d);
+		c.add(Calendar.DATE, mailReminderInterval);
+		Date nextIntervall = c.getTime();
 		
-		} catch (ParseException e) {
-			log.error(e.getMessage());
+		if( d != null && d.after(nextIntervall) ) {
+			return true; 
 		}
 		
 		return false;

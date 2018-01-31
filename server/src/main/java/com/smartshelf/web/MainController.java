@@ -100,7 +100,7 @@ public class MainController extends AbstractController {
     		
     		for(Item item : list) {
     			
-    			con.startBlinkCommand(item.box.getId(), color);
+    			con.startBlinkCommand(item.box.getBoxid(), color);
     		}
     	}
     }
