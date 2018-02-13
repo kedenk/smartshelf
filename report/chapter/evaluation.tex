@@ -1,63 +1,104 @@
  
-To evaluate interactive smart shelf, we tested it more than one time in real world scenarios. We found some strengths and weakness after the evaluation of our project. Moreover we did seven activities during evaluation that are listed the table below.
+To evaluate interactive Smart Shelf, we tested it in real world scenarios.
+We found some strengths and weaknesses during the evaluation of the project. 
+Moreover we did four activities during evaluation that are listed in table \ref{tab:user-study-results}.
+In the following some strength and weaknesses are described and if the functionalities described in previous sections are implemented. 
 
 \subsection{Strength} 
-\begin{description}
-  \item[$\bullet$] The design of drawers are reliable, long lasting and system has a Multiple User Interface for multiple users.
-   \item[$\bullet$] In service mode, color of LED's follows cultural analogy, i.e. Red (no item), Blue (have an item) and Yellow (<=half amount) in each drawer.
-   \item[$\bullet$] If there isn't any item in drawers, system send notification email to operator.
-   \item[$\bullet$] Web application smoothly start service mode that depicts the current state of smart shelf.
-   \item[$\bullet$] More than one user can search items simultaneously.
-   \item[$\bullet$] Using QR-Code user can get detail information of items i.e. capacity of resistors etc.
-   \end{description}
-\subsection{weakness}
+\begin{itemize}
+  \item The drawer design is reliable and long lasting. 
+  The system has a user interface for multiple users.
+   \item In service mode, colour of LED's follows cultural analogy, i.e. Red (no item), Blue (amount of items is above a defined threshold) and Yellow (amount of items is under threshold) in each drawer.
+   \item If there isn't any item in a drawer, system send notification email to operator and marks the drawer with a red LED.
+   \item User can start service mode via the webapp that depicts the current state of Smart Shelf.
+   \item More than one user can search items simultaneously.
+   \item Using QR-Code user can get detailed information of items i.e. capacity of resistors or amount of items in drawer etc.
+\end{itemize}
+
+\subsection{Weakness}
 \begin{itemize}
   \item LED's inside drawer is not clearly visible for visualization.
-        \subsection{solution}
+        \subsection{Solution}
          Use huge diffused LED's (10mm diameter). These are really bright so these can be seen in daytime. These have 465-470nm wavelength, 3.0-3.4V forward voltage and require 20mA current. Typical brightness is 1000mcd instead of using 5mm.
-  \item Load Cell is fix with plastic plate inside drawer. Sometimes Load Cell isn't measure correct weight owing to around space between plate and drawer.
-  		 \subsection{solution}
-  		 Inside drawer there should not any space between the edges of plate and drawer.
-  \item  Power supply is also an issue, sometimes some LED's isn't blink or ON just because of insufficient power supply.
-  	   \subsection{solution}
-  	    We can power up Micro Controller using an AC to DC adapter plugged into the barrel connector.The barrel connector can be supplied 7-12V or can use battery greater than 5V. 
-  \item Place a QR Code outside of each small drawer is also a problem.
-  	   \subsection{solution}
-  	    NFC \footnote{Abbr. Near Field Communication} Tags are one of the new tool that could be replace QR Code. NFC Tags are small in size so can easily be placed outside of each drawer. Most important NFC Tags are more secure, flexible, and easier to configure than QR Codes. It is also easy to make changes and edit existing NFC Tags rather than QR Codes. One last thing unlike QR Code, NFC Tags do not require an extra application. We can also use SnapTag.
- %
-\begin{figure}
-	\includegraphics[width=0.9\columnwidth]{figures/NFCTag}
-	\caption{NFC Tag}~\label{fig:NFC}
-\end{figure}
-%
-
+         Additionally, the LEDs could be placed outside of the drawer. 
+         
+  \item Load Cell carries a plastic plate inside the drawer to measure the weight of the items in it. 
+  Because of the soft plastic the drawer are made of sometimes the plastic plate sticks or tilt with the drawer walls. 
+  This leads to false measurements of the weights.
+  		 \subsection{Solution}
+  		 Drawers made of more solid material should be used. 
+  \item  Power supply is a issue if higher amount of LEDs are switched on.
+  	   \subsection{Solution}
+		The origin of this problem is the limited power supply by the Arduino. 
+		To tackle this problem an external power supply can be added to the LED circuits. 
 \end{itemize}
+
 \subsection{Best Scenarios} 
-  The project works best when search any item in drawer and scan QR Code to get further detail via Web App. Moreover proper communication is establish between Web App and Micro Controller via MQTT protocol. 
+During the evaluation some scenarios has shown they satisfies the problems explained in previous sections. 
+Searching an item in a shelf works best and was one of the main objectives of this project. 
+Additionally, the service mode showed good results to give a visual feedback to users about the status of the drawers. 
+  
 \subsection{User Testing} 
-We tried Web App Smart Shelf with different users and observed when they were doing these activities. These activities are listed in table.
+To evaluate how the webapp of the Smart Shelf system performs with real users a small user studies was done. 
+The results of the activities done in that study are listed in table \ref{tab:user-study-results}. 
+All activities are done two times. 
+The first time the user was able to make himself/herself familiar with the task. 
+In the second round with an slightly other objective it is measured if the task could be fulfilled successfully in a given amount of time. 
+\begin{description}
+	\item[Activity 1] \hfill \\ 
+	The use had the task to search for a specific item with the provided user interface. 
+	\item [Activity 2] \hfill \\
+	To get more information about a specific item the user had to scan the QR-Code on a specific drawer to get the datasheet. 
+	\item [Activity 3] \hfill \\
+	Objective of this activity was to obtain the amount of a specific item in the shelf. 
+	\item [Activity 4] \hfill \\
+	With this task the user should enable the service mode and give a feedback about empty drawers, half full and full drawers. 
+\end{description}
 %
-\begin{figure}
-	\includegraphics[width=1.1\columnwidth]{figures/Table}
-	\caption{}~\label{fig:table}
-\end{figure}
+\begin{table}
+	\begin{tabular}{|c|c|}
+		\hline 
+		Activity No. & Successfully fulfilled task \\
+		\hline 
+		1 & 4  \\ 
+		\hline 
+		2 & 4  \\ 
+		\hline 
+		3 & 3  \\ 
+		\hline 
+		4 & 2  \\ 
+		\hline 
+	\end{tabular} 
+	\caption{Overview of the user study results}~\label{tab:user-study-results}
+\end{table}
 %
+We tested all these activities with four different participants and interviewed these afterwards to collect feedback. 
+The recoded data is shown in this section. 
+The age distribution of the participants were 20 to 29 years, were the people are either employees or students of the University of Saarland. 
 \\
-We tested all these activities with different 4 participants and got feedback. We recorded all data of four different participants in this section. The participants were from different age groups range from 20 to 29 years old people some were employee and some were students at the University of Saarland. For each participant performed each activity 10 times as mention in table. Then we evaluated the number of successful observations, false results and no response. We would discuss the results corresponding to each activity and the percentage of successful observations when our system was perfectly fine and when a false detection happened and what might be the possible reasons of false results.
+Overall for the basic functionality of the Smart Shelf we observed almost 100\% of successfully fulfilled task for all participants. 
+All participants were able to fulfil the first two tasks within a short amount of time. 
+For Activity 3 only one participant was not able to solve the task within the given time. 
+After interviewing the participant we got the answer that it was not clear to the participant that he/she has first to search for an item to get the amount of items in the shelf. 
+The participant was searching for an overview page of all drawers/items to get the information about the amount of items. 
+To solve Activity 4 only two of four participants were able. 
+Reason for that could be the menu to enable the service mode. 
+To enable the service mode the user has to click the collapsable menu \grqq{}Management\grqq{} and follow the link \grqq{}Service Mode\grqq{}. 
+One participant was not able to find this link. 
+For the other participant the information about the meaning of the colours on the drawers was not clear to him/her. 
+\\
+\\
+The evaluation of the project reveals some important aspects in which the Smart Shelf can be improved. 
+The results described in this section show that the basic functionality reached good result with users which never got in touch with the new Smart Shelf. 
+But other, more complex functionalities like the service mode need more work to improve the usability. 
+During the interviews with the participants two minor improvements were proposed, too. 
+If a user searches for an item, first all LEDs on drawers which are in the result list switched on their LED. 
+Only after selecting the wanted item in the result list (see figure \ref{fig:webapp-mainpage}) all LEDs are switched of and only the LED on the correct drawer is switched on. 
+Some users were confused about this and proposed to switch on only one LED after the selection. 
+Furthermore, the buttons in the menu bar on top of the webpage are not that big. 
+These could be bigger that they be more easy to detect and pressed, especially on mobile devices. 
 
-For activity 1 and 5, we found our system is working properly in almost 88 percent cases because participants were intentionally performing.
-While for activity 2, the system was relatively less accurate as compared to the first activity. More than one time the system did not measured correct weight. In 70 percent cases the system measured the weight of items correctly but 21 percent the system failed to measure quantity of items. This activity was dependent upon weight measurement. Sometimes load sensor interpret wrong weight. For example with 3rd participant we achieved the success rate  81 percent as compared to the 2nd one. 
-Meanwhile activity 6 had high percentage of successful cases with 99 percent among the other all activities.
-While performing activity 3, the success ratio was 88 percent that was almost similar with activity 5, 86 percent success rate.
-As we went further and test activity 4, achieved success ratio over 96 percent, 4 percent cases was failed because of incorrect operations performed by novice users.
-
-In Contrast, the result of activity 7 was worst among all of above mentioned activities as 55 percent cases was failed because of inefficient power supply. Participants gave bad feedback when they stopped service mode the LED's were still blinking and system became unresponsive. Sometimes some LED's were ON when service mode was started. 
-At the end we conclude overall success rate of our Interactive Smart Shelf Web App in the light of these 7 activities was 90 percent. We found more than 85 percent of cases our system was working perfectly fine as shown in fig (5). 
-%
-\begin{figure}
-	\includegraphics[width=1.1\columnwidth]{figures/Chart}
-	\caption{}~\label{fig:Chart}
-\end{figure}
-%
-
-This figure represent the overall evaluation report in form of bar chart. But 15 percent was unsatisfied result owing to some reasons that is mention above.
+A important point for improvement is the usability of the drawer itself. 
+Currently all drawers wired with wires and can not easily taken off the drawer or for example to another place. 
+In a next version of the drawers these should be wireless to handle them more easily and more convenient. 
+This is also explained in the section \nameref{sec:future-work}.
