@@ -12,9 +12,9 @@ These components and how they communicate with each other are described in the f
 %
 
 \subsection{Backend}
-For the backend implementation the Spring framework is used. 
+For the backend implementation the Spring framework is used \cite{springframework}. 
 This enables to build a lightweight backend server that can serve web pages, a REST API and can connected to a MQTT\footnote{Abbr. Message Queuing Telemetry Transport Protocol} broker. 
-The communication between backend and Arduino is explained in section \ref{sec:communciation} in detail. 
+The communication between backend and Arduino with MQTT is explained in section \ref{sec:communciation} in detail. 
 To serve the webapp the backend implements several REST Services which can be consumed via HTTP. 
 Some of this services produce the different web pages for the webapp. 
 Others produce just data to keep the information in the webapp up to date. 
@@ -47,14 +47,17 @@ With MQTT a bidirectional connection can be established between backend and Ardu
 Primary, the backend send commands to the Arduino which LEDs the Arduino should switch on or off. 
 But additionally, the Arduino send in a defined interval the measured weights of items contained in different drawers. 
 How the weight measurement is done is explained in following chapters. 
+
 \subsection{Control System of Drawers}
 \input{paragraphs/shelfimplementation.tex}
+
 \subsection{Smart Drawer}
 \input{paragraphs/drawer.tex}
+
 \subsection{Webapp}
 To control the Smart Shelf a webapp is served by the backend. 
 This webapp can be opened via an URL from almost every browser which is connected to the network the backend is in. 
-Implementing the user interface as webapp brings the advantage that there is no platform dependency. 
+Implementing the user interface as webapp brings the advantage of platform independence. 
 It can be used form a Android or iOS phone as well as with computer. 
 
 Figure \ref{fig:webapp-mainpage} shows the main page of the user interface. 

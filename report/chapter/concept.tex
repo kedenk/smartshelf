@@ -1,7 +1,7 @@
 This section describes the basic concept of the \textit{Smart Shelf}. 
 The basic idea of the Smart Shelf is to enhance the interaction with shelves to work with these more effective and to improve the interaction. 
 To satisfy these objectives some core features are proposed in this section. 
-Figure \ref{fig:example_shelf} shows a similar shelf used for the project prototype which is small but satisfies the requirements for this prototype. 
+Figure \ref{fig:example_shelf} shows a similar shelf to the one used for the project prototype which is small but satisfies the requirements for this prototype. 
 However, one important fact which should be considered is the scalability. 
 The applied techniques should be feasible in a technical and economical way. 
 %
@@ -15,7 +15,7 @@ The applied techniques should be feasible in a technical and economical way.
 The first problem the Smart Shelf wants to address is the fact that it is hard to find a specific item in a high amount of drawers. 
 To do this we propose visual feedbacks combined with an user interface to submit search queries. 
 The user interface can be used to insert a search word, for example the name of the searched item. 
-This search query results in a visual feedback on the Smart Shelf, or in detail on the specific drawer where the item is contained. 
+This search query results in a visual feedback on the Smart Shelf, or in detail, on the specific drawer where the item is contained. 
 
 The user interface will be provided as webapp. 
 The platform independence of a webapp leads to this design decision. 
@@ -24,8 +24,8 @@ Additionally, more features are provided by the webapp.
 Overall, it provides all functionalities to interact with the Smart Shelf. 
 The search, control the shelf or getting more data about different items. 
 For getting more information about a specific item the user interface provides additionally to a datasheet-like page the capability to scan QR-Codes. 
-These QR-Codes are mounted on each drawer and encode the id of the drawer. 
-A central server, which also serves the webapp holds the state of the Smart Shelf and has a mapping of these scanned ids to drawers and items. 
+These QR-Codes are mounted on each drawer and encode the identifier of the drawer. 
+A central server, which also serves the webapp holds the state of the Smart Shelf and has a mapping of these scanned identifiers to drawers and items. 
 The different items contained in the shelf, the amount of them and current searches are called here as \textit{state}. 
 
 As mentioned before an unsatisfying fact is, if the user search for a while for a specific item and finally find it, the drawer is empty. 
@@ -33,7 +33,7 @@ To address this problem the Smart Shelf provides a \textit{predictive management
 This PMS enables the system to send notifications to operators if a drawer is empty or almost empty. 
 Notifications enables the operators to react early to items with low or zero amount. 
 This decreases the chance of out of stock items. 
-To realize such a PMS data are needed for analysis and reaction based on specific conditions. 
+To realize such a PMS data are needed for analysis to determine different reactions. 
 Every drawer will get a electronic unit to measure the weights of the items in a drawer. 
 Theses measurements are send to the server, which calculates with the stored weight of the specific item, the amount of items in that drawer. 
 This enables the PMS to have an overview of the state about all items contained in drawers. 
